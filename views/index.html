@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Twitter Bootstrap</title>
+    <title>TechX 2012 - HTML5 Web Workers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -23,200 +23,325 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+        canvas {
+			width: 575px;
+			height: 300px;
+            background-color: #000;
+            cursor: pointer;
+        }
+    </style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript"> 
+        (function ($) {
+
+            var Vector = function (x, y) {
+                this.x = x || 0;
+                this.y = y || 0;
+            };
+
+            Vector.prototype = {
+                add: function (v) {
+                    this.x += v.x;
+                    this.y += v.y;
+                    return this;
+                },
+                length: function () {
+                    return Math.sqrt(this.x * this.x + this.y * this.y);
+                },
+                rotate: function (theta) {
+                    var x = this.x;
+                    var y = this.y;
+                    this.x = Math.cos(theta) * this.x - Math.sin(theta) * this.y;
+                    this.y = Math.sin(theta) * this.x + Math.cos(theta) * this.y;
+                    //this.x = Math.cos(theta) * x - Math.sin(theta) * y;
+                    //this.y = Math.sin(theta) * x + Math.cos(theta) * y;
+                    return this;
+                },
+                mult: function (f) {
+                    this.x *= f;
+                    this.y *= f;
+                    return this;
+                }
+            };
+
+            var Leaf = function (p, r, c, ctx) {
+                this.p = p || null;
+                this.r = r || 0;
+                this.c = c || 'rgba(255,255,255,1.0)';
+                this.ctx = ctx;
+            }
+
+            Leaf.prototype = {
+                render: function () {
+                    var that = this;
+                    var ctx = this.ctx;
+                    var f = Branch.random(1, 2)
+                    for (var i = 0; i < 5; i++) {
+                        (function (r) {
+                            setTimeout(function () {
+                                ctx.beginPath();
+                                ctx.fillStyle = that.color;
+                                ctx.moveTo(that.p.x, that.p.y);
+                                ctx.arc(that.p.x, that.p.y, r, 0, Branch.circle, true);
+                                ctx.fill();
+                            }, r * 60);
+                        })(i);
+                    }
+                }
+            }
+
+
+            var Branch = function (p, v, r, c, t) {
+                this.p = p || null;
+                this.v = v || null;
+                this.r = r || 0;
+                this.length = 0;
+                this.generation = 1;
+                this.tree = t || null;
+                this.color = c || 'rgba(255,255,255,1.0)';
+                this.register();
+            };
+
+            Branch.prototype = {
+                register: function () {
+                    this.tree.addBranch(this);
+                },
+                draw: function () {
+                    var ctx = this.tree.ctx;
+                    ctx.beginPath();
+                    ctx.fillStyle = this.color;
+                    ctx.moveTo(this.p.x, this.p.y);
+                    ctx.arc(this.p.x, this.p.y, this.r, 0, Branch.circle, true);
+                    ctx.fill();
+                },
+                modify: function () {
+                    var angle = 0.18 - (0.10 / this.generation);
+                    this.p.add(this.v);
+                    this.length += this.v.length();
+                    this.r *= 0.99;
+                    this.v.rotate(Branch.random(-angle, angle)); //.mult(0.996);
+                    if (this.r < 0.8 || this.generation > 10) {
+                        this.tree.removeBranch(this);
+                        var l = new Leaf(this.p, 10, this.color, this.tree.ctx);
+                        l.render();
+                    }
+                },
+                grow: function () {
+                    this.draw();
+                    this.modify();
+                    this.fork();
+                },
+                fork: function () {
+                    var p = this.length - Branch.random(100, 200); // + (this.generation * 10);
+                    if (p > 0) {
+                        var n = Math.round(Branch.random(1, 3));
+                        this.tree.stat.fork += n - 1;
+                        for (var i = 0; i < n; i++) {
+                            Branch.clone(this);
+                        }
+                        this.tree.removeBranch(this);
+                    }
+                }
+            };
+
+            Branch.circle = 2 * Math.PI;
+            Branch.random = function (min, max) {
+                return Math.random() * (max - min) + min;
+            };
+            Branch.clone = function (b) {
+                var r = new Branch(new Vector(b.p.x, b.p.y), new Vector(b.v.x, b.v.y), b.r, b.color, b.tree);
+                r.generation = b.generation + 1;
+                return r;
+            };
+            Branch.rgba = function (r, g, b, a) {
+                return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+            };
+            Branch.randomrgba = function (min, max, a) {
+                return Branch.rgba(Math.round(Branch.random(min, max)), Math.round(Branch.random(min, max)), Math.round(Branch.random(min, max)), a);
+            };
+
+            var Tree = function () {
+                var branches = [];
+                var timer;
+                this.stat = {
+                    fork: 0,
+                    length: 0
+                };
+                this.addBranch = function (b) {
+                    branches.push(b);
+                };
+                this.removeBranch = function (b) {
+                    for (var i = 0; i < branches.length; i++) {
+                        if (branches[i] === b) {
+                            branches.splice(i, 1);
+                            return;
+                        }
+                    }
+                };
+                this.render = function (fn) {
+                    var that = this;
+                    timer = setInterval(function () {
+                        fn.apply(that, arguments);
+                        if (branches.length > 0) {
+                            for (var i = 0; i < branches.length; i++) {
+                                branches[i].grow();
+                            }
+                        }
+                        else {
+                            //clearInterval(timer);
+                        }
+                    }, 1000 / 30);
+                };
+                this.init = function (ctx) {
+                    this.ctx = ctx;
+                };
+                this.abort = function () {
+                    branches = [];
+                    this.stat = {
+                        fork: 0,
+                        length: 0
+                    }
+                };
+            };
+
+            function init() {
+
+                // init
+
+                var $window = $(window);
+                var $body = $("body");
+                var canvas_width = $window.width();
+                var canvas_height = $window.height() - 30;
+                var center_x = canvas_width / 2;
+                var stretch_factor = 600 / canvas_height;
+                var y_speed = 3 / stretch_factor;
+                var $statMsg = $("#statMsg");
+
+                // tx
+
+                var canvas = $('#canvas')[0];
+                canvas.width = canvas_width;
+                canvas.height = canvas_height;
+                var ctx = canvas.getContext("2d");
+                ctx.globalCompositeOperation = "lighter";
+
+                // tree
+
+                var t = new Tree();
+                t.init(ctx);
+                for (var i = 0; i < 3; i++) {
+                    new Branch(new Vector(center_x, canvas_height), new Vector(Math.random(-1, 1), -y_speed), 15 / stretch_factor, Branch.randomrgba(0, 255, 0.3), t);
+                }
+                t.render(function () {
+                    $statMsg.html(this.stat.fork);
+                });
+
+                // events
+
+                $("#drawArea").click(function (e) {
+                    //e.preventDefault();
+                    var x, y;
+                    x = e.pageX - this.offsetLeft;
+                    y = e.pageY - this.offsetTop;
+                    new Branch(new Vector(x, canvas_height), new Vector(0, -y_speed), 15 / stretch_factor, Branch.randomrgba(0, 255, 0.3), t);
+                });
+                $("#btnClear").click(function (e) {
+                    e.stopPropagation();
+                    t.abort();
+                    ctx.clearRect(0, 0, canvas_width, canvas_height);
+                    $statMsg.html("0");
+                });
+                $("#btnReload").click(function (e) {
+                    e.stopPropagation();
+                    window.location.reload();
+                });
+                $("#btnNewExperiment").click(function (e) {
+                    window.location = "http://www.openrise.com/lab/FlowerPower";
+                });
+            }
+
+            $(function () {
+                init();
+            });
+
+        })(jQuery);
+    </script>
+
   </head>
 
   <body data-spy="scroll" data-target=".subnav" data-offset="50">
 
-
-  <!-- Navbar
-    ================================================== -->
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="./index.html">Bootstrap</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active">
-                <a href="./index.html">Overview</a>
-              </li>
-              <li class="">
-                <a href="./scaffolding.html">Scaffolding</a>
-              </li>
-              <li class="">
-                <a href="./base-css.html">Base CSS</a>
-              </li>
-              <li class="">
-                <a href="./components.html">Components</a>
-              </li>
-              <li class="">
-                <a href="./javascript.html">Javascript plugins</a>
-              </li>
-              <li class="">
-                <a href="./less.html">Using LESS</a>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="">
-                <a href="./download.html">Customize</a>
-              </li>
-              <li class="">
-                <a href="./examples.html">Examples</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container">
 
-<!-- Masthead
-================================================== -->
-<header class="jumbotron masthead">
-  <div class="inner">
-    <h1>Bootstrap, from Twitter</h1>
-    <p>Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions.</p>
-    <p class="download-info">
-      <a href="https://github.com/twitter/bootstrap/" class="btn btn-primary btn-large">View project on GitHub</a>
-      <a href="assets/bootstrap.zip" class="btn btn-large">Download Bootstrap <small>(v2.0.2)</small></a>
-    </p>
-  </div>
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>TechX 2012 - HTML5 WebWorkers API</h1>
+		  <p class="lead">Dozens of reusable components are built into Bootstrap to provide navigation, alerts, popovers, and much more.</p>
+		</header>
 
-  <div class="bs-links">
-    <ul class="quick-links">
-      <li><a href="./upgrading.html">Upgrading from 1.4</a></li>
-      <li><a href="https://github.com/twitter/bootstrap/zipball/master">Download with docs</a></li>
-      <li><a href="https://github.com/twitter/bootstrap/issues?state=open">Submit issues</a></li>
-      <li><a href="https://github.com/twitter/bootstrap/wiki">Roadmap and changelog</a></li>
-    </ul>
-    <ul class="quick-links">
-      <li>
-        <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=twitter&repo=bootstrap&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="112px" height="20px"></iframe>
-      </li>
-      <li>
-        <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=twitter&repo=bootstrap&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="98px" height="20px"></iframe>
-      </li>
-      <li class="follow-btn">
-        <a href="https://twitter.com/twbootstrap" class="twitter-follow-button" data-link-color="#0069D6" data-show-count="true">Follow @twbootstrap</a>
-      </li>
-      <li class="tweet-btn">
-        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://twitter.github.com/bootstrap/" data-count="horizontal" data-via="twbootstrap" data-related="mdo:Creator of Twitter Bootstrap">Tweet</a>
-      </li>
-    </ul>
-  </div>
-</header>
+		<!-- Forms
+		================================================== -->
+		<section id="forms">
+		  <div class="row">
+		    <div class="span6">
+		      <form class="form-horizontal">
+		        <fieldset>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="select01">Select Row Value</label>
+		            <div class="controls">
+		              <select id="row">
+		                <option>choose a value</option>
+				        <option>700</option>
+				        <option>800</option>																							
+						<option>900</option>		
+						<option>1000</option>
+						<option>1100</option>
+		              </select>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="select01">Select Column Value</label>
+		            <div class="controls">
+		              <select id="col">
+		                <option>choose a value</option>
+				        <option>700</option>
+				        <option>800</option>
+						<option>900</option>		
+						<option>1000</option>
+						<option>1100</option>																	
+		              </select>
+		            </div>
+		          </div>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="textarea">Output</label>
+		            <div class="controls">
+		              <textarea class="input-xlarge" id="textarea" rows="10"></textarea>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="textarea">Process</label>
+		            <div class="controls">
+		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
+					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
+		            </div>
+		          </div>
+		        </fieldset>
+		      </form>
+		    </div>
 
-<hr class="soften">
-
-<div class="marketing">
-  <h1>Designed for everyone, everywhere.</h1>
-  <p class="marketing-byline">Need reasons to love Bootstrap? Look no further.</p>
-  <div class="row">
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_042_group.png">
-      <h2>Built for and by nerds</h2>
-      <p>Like you, we love building awesome products on the web. We love it so much, we decided to help people just like us do it easier, better, and faster. Bootstrap is built for you.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_079_podium.png">
-      <h2>For all skill levels</h2>
-      <p>Bootstrap is designed to help people of all skill levels&mdash;designer or developer, huge nerd or early beginner. Use it as a complete kit or use to start something more complex.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_163_iphone.png">
-      <h2>Cross-everything</h2>
-      <p>Originally built with only modern browsers in mind, Bootstrap has evolved to include support for all major browsers (even IE7!) and, with Bootstrap 2, tablets and smartphones, too.</p>
-    </div>
-  </div><!--/row-->
-  <div class="row">
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_155_show_thumbnails.png">
-      <h2>12-column grid</h2>
-      <p>Grid systems aren't everything, but having a durable and flexible one at the core of your work can make development much simpler. Use our built-in grid classes or roll your own.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_214_resize_small.png">
-      <h2>Responsive design</h2>
-      <p>With Bootstrap 2, we've gone fully responsive. Our components are scaled according to a range of resolutions and devices to provide a consistent experience, no matter what.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_266_book_open.png">
-      <h2>Styleguide docs</h2>
-      <p>Unlike other front-end toolkits, Bootstrap was designed first and foremost as a styleguide to document not only our features, but best practices and living, coded examples.</p>
-    </div>
-  </div><!--/row-->
-  <div class="row">
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_082_roundabout.png">
-      <h2>Growing library</h2>
-      <p>Despite being only 10kb (gzipped), Bootstrap is one of the most complete front-end toolkits out there with dozens of fully functional components ready to be put to use.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/glyphicons/glyphicons_009_magic.png">
-      <h2>Custom jQuery plugins</h2>
-      <p>What good is an awesome design component without easy-to-use, proper, and extensible interactions? With Bootstrap, you get custom-built jQuery plugins to bring your projects to life.</p>
-    </div>
-    <div class="span4">
-      <img class="bs-icon" src="assets/img/less-small.png">
-      <h2>Built on LESS</h2>
-      <p>Where vanilla CSS falters, LESS excels. Variables, nesting, operations, and mixins in LESS makes coding CSS faster and more efficient with minimal overhead.</p>
-    </div>
-  </div><!--/row-->
-  <div class="row">
-    <div class="span3">
-      <img class="small-bs-icon" src="assets/img/icon-html5.png">
-      <h3>HTML5</h3>
-      <p>Built to support new HTML5 elements and syntax.</p>
-    </div>
-    <div class="span3">
-      <img class="small-bs-icon" src="assets/img/icon-css3.png">
-      <h3>CSS3</h3>
-      <p>Progressively enhanced components for ultimate style.</p>
-    </div>
-    <div class="span3">
-      <img class="small-bs-icon" src="assets/img/icon-github.png">
-      <h3>Open-source</h3>
-      <p>Built for and maintained by the community via <a href="https://github.com">GitHub</a>.</p>
-    </div>
-    <div class="span3">
-      <img class="small-bs-icon" src="assets/img/icon-twitter.png">
-      <h3>Made at Twitter</h3>
-      <p>Brought to you by an experienced <a href="http://twitter.com/fat">engineer</a> and <a href="http://twitter.com/mdo">designer</a>.</p>
-    </div>
-  </div><!--/row-->
-
-  <hr class="soften">
-
-  <h1>Built with Bootstrap.</h1>
-  <p class="marketing-byline">For even more sites built with Bootstrap, <a href="http://builtwithbootstrap.tumblr.com/" target="_blank">visit the unofficial Tumblr</a> or <a href="./examples.html">browse the examples</a>.</p>
-  <ul class="thumbnails example-sites">
-    <li class="span3">
-      <a class="thumbnail" href="http://soundready.fm/" target="_blank">
-        <img src="assets/img/example-sites/soundready.png" alt="SoundReady.fm">
-      </a>
-    </li>
-    <li class="span3">
-      <a class="thumbnail" href="http://kippt.com/" target="_blank">
-        <img src="assets/img/example-sites/kippt.png" alt="Kippt">
-      </a>
-    </li>
-    <li class="span3">
-      <a class="thumbnail" href="http://www.fleetio.com/" target="_blank">
-        <img src="assets/img/example-sites/fleetio.png" alt="Fleetio">
-      </a>
-    </li>
-    <li class="span3">
-      <a class="thumbnail" href="http://www.jshint.com/" target="_blank">
-        <img src="assets/img/example-sites/jshint.png" alt="JS Hint">
-      </a>
-    </li>
-  </ul>
-
-</div><!-- /.marketing -->
+		    <div class="span6">
+			  <canvas id='canvas'></canvas>
+			</div>
+		  </div>
+		</section>
 
      <!-- Footer
       ================================================== -->
@@ -226,14 +351,14 @@
         <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
         <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
       </footer>
-
     </div><!-- /container -->
-
-
 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+
+    <script type="text/javascript" src="assets/js/demojs/twoDarray.js"></script>
+
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="assets/js/jquery.js"></script>
     <script src="assets/js/google-code-prettify/prettify.js"></script>
@@ -250,7 +375,5 @@
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
     <script src="assets/js/application.js"></script>
-
-
   </body>
 </html>
