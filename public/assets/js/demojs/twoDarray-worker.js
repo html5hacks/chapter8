@@ -22,10 +22,8 @@ var computations = {
 self.addEventListener('message', function(e) {
 
     var message = JSON.parse(e.data)
-    
     computated = computations[message.compfn](message);
 
     self.postMessage(computated);
-    
-    
+  
 }, false);

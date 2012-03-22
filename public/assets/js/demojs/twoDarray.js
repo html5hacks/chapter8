@@ -1,6 +1,5 @@
 
 	function process() {
-		
 		console.log("WITHOUT WORKER")
         
         var r = $('select#row').val();
@@ -19,9 +18,7 @@
         $('#textarea').text(a.toString());
 	};
 
-
 	function processWorker() {
-
 		console.log("WORKER")
         var r = $('select#row').val();
 	    var c = $('select#col').val();
@@ -38,8 +35,8 @@
      	    // print results of array in result div
             var data = event.data 
             // Must stringify before appending to DOM
+			console.log('data has returned as: ' + typeof data + ' ...time to stringify and append to DOM')
             $('#textarea').text(JSON.stringify(data));
-
    	    };
 	};
 
