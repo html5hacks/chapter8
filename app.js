@@ -35,13 +35,16 @@ app.configure('production', function(){
 
 // Routes
 app.get('/', function(req, res){
-  res.render("index.html");
+  res.render("balls.html");
 });
-app.get('/index.html', function(req, res){
-  res.render("index.html");
+app.get('/balls.html', function(req, res){
+  res.render("balls.html");
 });
-app.get('/swarm.html', function(req, res){
-  res.render("swarm.html");
+app.get('/timers.html', function(req, res){
+  res.render("timers.html");
+});
+app.get('/adv-timers.html', function(req, res){
+  res.render("adv-timers.html");
 });
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

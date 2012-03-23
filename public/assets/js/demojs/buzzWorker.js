@@ -20,7 +20,7 @@ var actions = {
 		updates.minDy = -2;
 		updates.maxDy = 3;
 		updates.symbol = '';
-		updates.className = 'thing icon-minus';		
+		updates.className = 'thing icon-fire';		
 		postMessage(updates);		
 	},
 	
@@ -34,7 +34,7 @@ var actions = {
 		updates.minDy = -3;
 		updates.maxDy = 2;
 		updates.symbol = '';
-		updates.className = 'thing icon-plus';		
+		updates.className = 'thing icon-plane';		
 		postMessage(updates);		
 	},	
 	
