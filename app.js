@@ -43,8 +43,8 @@ app.get('/balls.html', function(req, res){
 app.get('/timers.html', function(req, res){
   res.render("timers.html");
 });
-app.get('/adv-timers.html', function(req, res){
-  res.render("adv-timers.html");
+app.get('/artificial.html', function(req, res){
+  res.render("artificial.html");
 });
 app.listen(process.env.PORT || 3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

@@ -46,241 +46,9 @@
     </style>
 
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript"> 
-        // (function ($) {
-        // 
-        //      var Vector = function (x, y) {
-        //          this.x = x || 0;
-        //          this.y = y || 0;
-        //      };
-        // 
-        //      Vector.prototype = {
-        //          add: function (v) {
-        //              this.x += v.x;
-        //              this.y += v.y;
-        //              return this;
-        //          },
-        //          length: function () {
-        //              return Math.sqrt(this.x * this.x + this.y * this.y);
-        //          },
-        //          rotate: function (theta) {
-        //              var x = this.x;
-        //              var y = this.y;
-        //              this.x = Math.cos(theta) * this.x - Math.sin(theta) * this.y;
-        //              this.y = Math.sin(theta) * this.x + Math.cos(theta) * this.y;
-        //              //this.x = Math.cos(theta) * x - Math.sin(theta) * y;
-        //              //this.y = Math.sin(theta) * x + Math.cos(theta) * y;
-        //              return this;
-        //          },
-        //          mult: function (f) {
-        //              this.x *= f;
-        //              this.y *= f;
-        //              return this;
-        //          }
-        //      };
-        // 
-        //      var Leaf = function (p, r, c, ctx) {
-        //          this.p = p || null;
-        //          this.r = r || 0;
-        //          this.c = c || 'rgba(255,255,255,1.0)';
-        //          this.ctx = ctx;
-        //      }
-        // 
-        //      Leaf.prototype = {
-        //          render: function () {
-        //              var that = this;
-        //              var ctx = this.ctx;
-        //              var f = Branch.random(1, 2)
-        //              for (var i = 0; i < 5; i++) {
-        //                  (function (r) {
-        //                      setTimeout(function () {
-        //                          ctx.beginPath();
-        //                          ctx.fillStyle = that.color;
-        //                          ctx.moveTo(that.p.x, that.p.y);
-        //                          ctx.arc(that.p.x, that.p.y, r, 0, Branch.circle, true);
-        //                          ctx.fill();
-        //                      }, r * 60);
-        //                  })(i);
-        //              }
-        //          }
-        //      }
-        // 
-        // 
-        //      var Branch = function (p, v, r, c, t) {
-        //          this.p = p || null;
-        //          this.v = v || null;
-        //          this.r = r || 0;
-        //          this.length = 0;
-        //          this.generation = 1;
-        //          this.tree = t || null;
-        //          this.color = c || 'rgba(255,255,255,1.0)';
-        //          this.register();
-        //      };
-        // 
-        //      Branch.prototype = {
-        //          register: function () {
-        //              this.tree.addBranch(this);
-        //          },
-        //          draw: function () {
-        //              var ctx = this.tree.ctx;
-        //              ctx.beginPath();
-        //              ctx.fillStyle = this.color;
-        //              ctx.moveTo(this.p.x, this.p.y);
-        //              ctx.arc(this.p.x, this.p.y, this.r, 0, Branch.circle, true);
-        //              ctx.fill();
-        //          },
-        //          modify: function () {
-        //              var angle = 0.18 - (0.10 / this.generation);
-        //              this.p.add(this.v);
-        //              this.length += this.v.length();
-        //              this.r *= 0.99;
-        //              this.v.rotate(Branch.random(-angle, angle)); //.mult(0.996);
-        //              if (this.r < 0.8 || this.generation > 10) {
-        //                  this.tree.removeBranch(this);
-        //                  var l = new Leaf(this.p, 10, this.color, this.tree.ctx);
-        //                  l.render();
-        //              }
-        //          },
-        //          grow: function () {
-        //              this.draw();
-        //              this.modify();
-        //              this.fork();
-        //          },
-        //          fork: function () {
-        //              var p = this.length - Branch.random(100, 200); // + (this.generation * 10);
-        //              if (p > 0) {
-        //                  var n = Math.round(Branch.random(1, 3));
-        //                  this.tree.stat.fork += n - 1;
-        //                  for (var i = 0; i < n; i++) {
-        //                      Branch.clone(this);
-        //                  }
-        //                  this.tree.removeBranch(this);
-        //              }
-        //          }
-        //      };
-        // 
-        //      Branch.circle = 2 * Math.PI;
-        //      Branch.random = function (min, max) {
-        //          return Math.random() * (max - min) + min;
-        //      };
-        //      Branch.clone = function (b) {
-        //          var r = new Branch(new Vector(b.p.x, b.p.y), new Vector(b.v.x, b.v.y), b.r, b.color, b.tree);
-        //          r.generation = b.generation + 1;
-        //          return r;
-        //      };
-        //      Branch.rgba = function (r, g, b, a) {
-        //          return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
-        //      };
-        //      Branch.randomrgba = function (min, max, a) {
-        //          return Branch.rgba(Math.round(Branch.random(min, max)), Math.round(Branch.random(min, max)), Math.round(Branch.random(min, max)), a);
-        //      };
-        // 
-        //      var Tree = function () {
-        //          var branches = [];
-        //          var timer;
-        //          this.stat = {
-        //              fork: 0,
-        //              length: 0
-        //          };
-        //          this.addBranch = function (b) {
-        //              branches.push(b);
-        //          };
-        //          this.removeBranch = function (b) {
-        //              for (var i = 0; i < branches.length; i++) {
-        //                  if (branches[i] === b) {
-        //                      branches.splice(i, 1);
-        //                      return;
-        //                  }
-        //              }
-        //          };
-        //          this.render = function (fn) {
-        //              var that = this;
-        //              timer = setInterval(function () {
-        //                  fn.apply(that, arguments);
-        //                  if (branches.length > 0) {
-        //                      for (var i = 0; i < branches.length; i++) {
-        //                          branches[i].grow();
-        //                      }
-        //                  }
-        //                  else {
-        //                      //clearInterval(timer);
-        //                  }
-        //              }, 1000 / 30);
-        //          };
-        //          this.init = function (ctx) {
-        //              this.ctx = ctx;
-        //          };
-        //          this.abort = function () {
-        //              branches = [];
-        //              this.stat = {
-        //                  fork: 0,
-        //                  length: 0
-        //              }
-        //          };
-        //      };
-        // 
-        //      function init() {
-        // 
-        //          // init
-        // 
-        //          var $window = $(window);
-        //          var $body = $("body");
-        //          var canvas_width = $window.width();
-        //          var canvas_height = $window.height() - 30;
-        //          var center_x = canvas_width / 2;
-        //          var stretch_factor = 600 / canvas_height;
-        //          var y_speed = 3 / stretch_factor;
-        //          var $statMsg = $("#statMsg");
-        // 
-        //          // tx
-        // 
-        //          var canvas = $('#canvas')[0];
-        //          canvas.width = canvas_width;
-        //          canvas.height = canvas_height;
-        //          var ctx = canvas.getContext("2d");
-        //          ctx.globalCompositeOperation = "lighter";
-        // 
-        //          // tree
-        // 
-        //          var t = new Tree();
-        //          t.init(ctx);
-        //          for (var i = 0; i < 3; i++) {
-        //              new Branch(new Vector(center_x, canvas_height), new Vector(Math.random(-1, 1), -y_speed), 15 / stretch_factor, Branch.randomrgba(0, 255, 0.3), t);
-        //          }
-        //          t.render(function () {
-        //              $statMsg.html(this.stat.fork);
-        //          });
-        // 
-        //          // events
-        // 
-        //          $("#drawArea").click(function (e) {
-        //              //e.preventDefault();
-        //              var x, y;
-        //              x = e.pageX - this.offsetLeft;
-        //              y = e.pageY - this.offsetTop;
-        //              new Branch(new Vector(x, canvas_height), new Vector(0, -y_speed), 15 / stretch_factor, Branch.randomrgba(0, 255, 0.3), t);
-        //          });
-        //          $("#btnClear").click(function (e) {
-        //              e.stopPropagation();
-        //              t.abort();
-        //              ctx.clearRect(0, 0, canvas_width, canvas_height);
-        //              $statMsg.html("0");
-        //          });
-        //          $("#btnReload").click(function (e) {
-        //              e.stopPropagation();
-        //              window.location.reload();
-        //          });
-        //          $("#btnNewExperiment").click(function (e) {
-        //              window.location = "http://www.openrise.com/lab/FlowerPower";
-        //          });
-        //      }
-        // 
-        //      $(function () {
-        //          init();
-        //      });
-        // 
-        //  })(jQuery);
-     </script>
+	
+	<!-- Canvas Balls -->
+
     <script type="text/javascript">
     window.requestAnimFrame = (function(callback){
         return window.requestAnimationFrame ||
@@ -297,121 +65,56 @@
 		console.log('init')
         balls = [];
         
+		var black = "#000";
         var blue = "#3A5BCD";
         var red = "#EF2B36";
         var yellow = "#FFC636";
         var green = "#02A817";
 
+		balls.push(new Ball(0, 0, 0, 0, black));
+		balls.push(new Ball(5, 5, 0, 0, black));
+		balls.push(new Ball(10, 0, 0, 0, black));
+        balls.push(new Ball(15, 10, 0, 0, black));
+        balls.push(new Ball(20, 0, 0, 0, black));
+        balls.push(new Ball(25, 15, 0, 0, black));
+        balls.push(new Ball(30, 0, 0, 0, black));
+        balls.push(new Ball(35, 20, 0, 0, black));
 
-		// // L
-		balls.push(new Ball(100, 49, 0, 0, green));
-		balls.push(new Ball(105, 49, 0, 0, green));
-		balls.push(new Ball(110, 49, 0, 0, green));
-        balls.push(new Ball(115, 49, 0, 0, green));
-        balls.push(new Ball(120, 49, 0, 0, green));
-        balls.push(new Ball(125, 49, 0, 0, green));
-        balls.push(new Ball(130, 49, 0, 0, green));
-        balls.push(new Ball(135, 49, 0, 0, green));
+		balls.push(new Ball(100, 0, 0, 0, green));
+		balls.push(new Ball(105, 5, 0, 0, green));
+		balls.push(new Ball(110, 0, 0, 0, green));
+        balls.push(new Ball(115, 10, 0, 0, green));
+        balls.push(new Ball(120, 0, 0, 0, green));
+        balls.push(new Ball(125, 15, 0, 0, green));
+        balls.push(new Ball(130, 0, 0, 0, green));
+        balls.push(new Ball(135, 20, 0, 0, green));
 
+		balls.push(new Ball(200, 0, 0, 0, blue));
+		balls.push(new Ball(205, 5, 0, 0, blue));
+		balls.push(new Ball(210, 0, 0, 0, blue));
+        balls.push(new Ball(215, 10, 0, 0, blue));
+        balls.push(new Ball(220, 0, 0, 0, blue));
+        balls.push(new Ball(225, 15, 0, 0, blue));
+        balls.push(new Ball(230, 0, 0, 0, blue));
+        balls.push(new Ball(235, 20, 0, 0, blue));
 
+		balls.push(new Ball(300, 0, 0, 0, red));
+		balls.push(new Ball(305, 5, 0, 0, red));
+		balls.push(new Ball(310, 0, 0, 0, red));
+        balls.push(new Ball(315, 10, 0, 0, red));
+        balls.push(new Ball(320, 0, 0, 0, red));
+        balls.push(new Ball(325, 15, 0, 0, red));
+        balls.push(new Ball(330, 0, 0, 0, red));
+        balls.push(new Ball(335, 20, 0, 0, red));
 
-        balls.push(new Ball(390, 105, 0, 0, green));
-        balls.push(new Ball(390, 118, 0, 0, green));
-        balls.push(new Ball(388, 128, 0, 0, green));
-        balls.push(new Ball(400, 128, 0, 0, green));
-        
-        // G
-        // balls.push(new Ball(173, 63, 0, 0, blue));
-        // balls.push(new Ball(158, 53, 0, 0, blue));
-        // balls.push(new Ball(143, 52, 0, 0, blue));
-        // balls.push(new Ball(130, 53, 0, 0, blue));
-        // balls.push(new Ball(117, 58, 0, 0, blue));
-        // balls.push(new Ball(110, 70, 0, 0, blue));
-        // balls.push(new Ball(102, 82, 0, 0, blue));
-        // balls.push(new Ball(104, 96, 0, 0, blue));
-        // balls.push(new Ball(105, 107, 0, 0, blue));
-        // balls.push(new Ball(110, 120, 0, 0, blue));
-        // balls.push(new Ball(124, 130, 0, 0, blue));
-        // balls.push(new Ball(139, 136, 0, 0, blue));
-        // balls.push(new Ball(152, 136, 0, 0, blue));
-        // balls.push(new Ball(166, 136, 0, 0, blue));
-        // balls.push(new Ball(174, 127, 0, 0, blue));
-        // balls.push(new Ball(179, 110, 0, 0, blue));
-        // balls.push(new Ball(166, 109, 0, 0, blue));
-        // balls.push(new Ball(156, 110, 0, 0, blue));
-        
-        // O
-        // balls.push(new Ball(210, 81, 0, 0, red));
-        // balls.push(new Ball(197, 91, 0, 0, red));
-        // balls.push(new Ball(196, 103, 0, 0, red));
-        // balls.push(new Ball(200, 116, 0, 0, red));
-        // balls.push(new Ball(209, 127, 0, 0, red));
-        // balls.push(new Ball(223, 130, 0, 0, red));
-        // balls.push(new Ball(237, 127, 0, 0, red));
-        // balls.push(new Ball(244, 114, 0, 0, red));
-        // balls.push(new Ball(242, 98, 0, 0, red));
-        // balls.push(new Ball(237, 86, 0, 0, red));
-        // balls.push(new Ball(225, 81, 0, 0, red));
-        // 
-        // // O
-        // var oOffset = 67;
-        // balls.push(new Ball(oOffset + 210, 81, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 197, 91, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 196, 103, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 200, 116, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 209, 127, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 223, 130, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 237, 127, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 244, 114, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 242, 98, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 237, 86, 0, 0, yellow));
-        // balls.push(new Ball(oOffset + 225, 81, 0, 0, yellow));
-        // 
-        // // G
-        // balls.push(new Ball(370, 80, 0, 0, blue));
-        // balls.push(new Ball(358, 79, 0, 0, blue));
-        // balls.push(new Ball(346, 79, 0, 0, blue));
-        // balls.push(new Ball(335, 84, 0, 0, blue));
-        // balls.push(new Ball(330, 98, 0, 0, blue));
-        // balls.push(new Ball(334, 111, 0, 0, blue));
-        // balls.push(new Ball(348, 116, 0, 0, blue));
-        // balls.push(new Ball(362, 109, 0, 0, blue));
-        // balls.push(new Ball(362, 94, 0, 0, blue));
-        // balls.push(new Ball(355, 128, 0, 0, blue));
-        // balls.push(new Ball(340, 135, 0, 0, blue));
-        // balls.push(new Ball(327, 142, 0, 0, blue));
-        // balls.push(new Ball(325, 155, 0, 0, blue));
-        // balls.push(new Ball(339, 165, 0, 0, blue));
-        // balls.push(new Ball(352, 166, 0, 0, blue));
-        // balls.push(new Ball(367, 161, 0, 0, blue));
-        // balls.push(new Ball(371, 149, 0, 0, blue));
-        // balls.push(new Ball(366, 137, 0, 0, blue));
-        // 
-        // // L
-        // balls.push(new Ball(394, 49, 0, 0, green));
-        // balls.push(new Ball(381, 50, 0, 0, green));
-        // balls.push(new Ball(391, 61, 0, 0, green));
-        // balls.push(new Ball(390, 73, 0, 0, green));
-        // balls.push(new Ball(392, 89, 0, 0, green));
-        // balls.push(new Ball(390, 105, 0, 0, green));
-        // balls.push(new Ball(390, 118, 0, 0, green));
-        // balls.push(new Ball(388, 128, 0, 0, green));
-        // balls.push(new Ball(400, 128, 0, 0, green));
-        // 
-        // // E
-        // balls.push(new Ball(426, 101, 0, 0, red));
-        // balls.push(new Ball(436, 98, 0, 0, red));
-        // balls.push(new Ball(451, 95, 0, 0, red));
-        // balls.push(new Ball(449, 83, 0, 0, red));
-        // balls.push(new Ball(443, 78, 0, 0, red));
-        // balls.push(new Ball(430, 77, 0, 0, red));
-        // balls.push(new Ball(418, 82, 0, 0, red));
-        // balls.push(new Ball(414, 93, 0, 0, red));
-        // balls.push(new Ball(412, 108, 0, 0, red));
-        // balls.push(new Ball(420, 120, 0, 0, red));
-        // balls.push(new Ball(430, 127, 0, 0, red));
-        // balls.push(new Ball(442, 130, 0, 0, red));
-        // balls.push(new Ball(450, 125, 0, 0, red));
+		balls.push(new Ball(400, 0, 0, 0, yellow));
+		balls.push(new Ball(405, 5, 0, 0, yellow));
+		balls.push(new Ball(410, 0, 0, 0, yellow));
+        balls.push(new Ball(415, 10, 0, 0, yellow));
+        balls.push(new Ball(420, 0, 0, 0, yellow));
+        balls.push(new Ball(425, 15, 0, 0, yellow));
+        balls.push(new Ball(430, 0, 0, 0, yellow));
+        balls.push(new Ball(435, 20, 0, 0, yellow));        
         
         return balls;
     }
@@ -612,6 +315,7 @@
 
   <body data-spy="scroll" data-target=".subnav" data-offset="50">
 	
+	
 	  <!-- Navbar
 	    ================================================== -->
 	    <div class="navbar navbar-fixed-top">
@@ -629,13 +333,7 @@
 	                <a href="./balls.html">Canvas Balls</a>
 	              </li>
 	              <li class="">
-	                <a href="./timers.html">Timers</a>
-	              </li>
-	              <li class="">
-	                <a href="./adv-timers.html">Advanced Timers</a>
-	              </li>
-	              <li class="">
-	                <a href="./shared.html">Shared Workers</a>
+	                <a href="./artificial.html">Artificial Intelligence</a>
 	              </li>
 	            </ul>
 	          </div>
@@ -665,14 +363,10 @@
 		            <div class="controls">
 		              <select id="row">
 		                <option>choose a value</option>
-				        <option>700</option>
-				        <option>800</option>																							
-						<option>900</option>		
 						<option>1000</option>
-						<option>1100</option>
-						<option>1300</option>
-						<option>1500</option>
-						<option>1700</option>											
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>											
 		              </select>
 		            </div>
 		          </div>
@@ -682,14 +376,10 @@
 		            <div class="controls">
 		              <select id="col">
 		                <option>choose a value</option>
-				        <option>700</option>
-				        <option>800</option>
-						<option>900</option>		
 						<option>1000</option>
-						<option>1100</option>																	
-						<option>1300</option>
-						<option>1500</option>
-						<option>1700</option>												
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>												
 		              </select>
 		            </div>
 		          </div>
@@ -697,7 +387,7 @@
 			      <div class="control-group">
 		            <label class="control-label" for="textarea">Output</label>
 		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="10"></textarea>
+		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
 		            </div>
 		          </div>
 		
@@ -714,7 +404,7 @@
 
 		    <div class="span6">
 			  <!-- <canvas id='canvas'></canvas> -->
-			  <canvas id="myCanvas" width="578" height="200"></canvas>
+			  <canvas id="myCanvas" width="435" height="200"></canvas>
 			</div>
 		  </div>
 		</section>
@@ -723,9 +413,7 @@
       ================================================== -->
       <footer class="footer">
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter" target="_blank">@twitter</a> by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
-        <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-        <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Designed and built for techX 2012.</p>
       </footer>
     </div><!-- /container -->
 
@@ -733,7 +421,10 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
+
     <script type="text/javascript" src="assets/js/demojs/twoDarray.js"></script>
+
+
 
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="assets/js/jquery.js"></script>

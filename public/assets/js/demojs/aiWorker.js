@@ -1,21 +1,21 @@
 var things;
 var updates;
 
-var scaledRandomInt = function(max, min) {
-    return Math.round(min + Math.random()*(max-min));
-}
-
-var getDistance = function(x1,x2,y1,y2) {
-    return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2));
-}
+// var scaledRandomInt = function(max, min) {
+//     return Math.round(min + Math.random()*(max-min));
+// }
+// 
+// var getDistance = function(x1,x2,y1,y2) {
+//     return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2));
+// }
 
 var actions = {
-	makeHighestSleepy: function(){
+	fireToBelow: function(){
 		var highest = things.sort(function(a, b){
 			return a.y - b.y
 		});
 		updates = {};
-		updates.action = 'makeHighestSleepy';
+		updates.action = 'fireToBelow';
 		updates.id = highest[0].id;
 		updates.minDy = -2;
 		updates.maxDy = 3;
@@ -24,12 +24,12 @@ var actions = {
 		postMessage(updates);		
 	},
 	
-	makeLowestBuzzy: function(){
+	rocketToSky: function(){
 		var lowest = things.sort(function(a, b){
 			return b.y - a.y
 		});
 		updates = {};
-		updates.action = 'makeLowestBuzzy';
+		updates.action = 'rocketToSky';
 		updates.id = lowest[0].id;
 		updates.minDy = -3;
 		updates.maxDy = 2;
@@ -38,12 +38,12 @@ var actions = {
 		postMessage(updates);		
 	},	
 	
-	killSlowest: function(){
+	erradicateSlowest: function(){
 		var slowest = things.sort(function(a, b){
 			return a.pxTravelled - b.pxTravelled
 		});
 		updates = {};
-		updates.action = 'killSlowest';
+		updates.action = 'erradicateSlowest';
 		updates.id = slowest[0].id;
 		updates.kill = true;
 		postMessage(updates);		
@@ -62,11 +62,3 @@ onmessage = function(e){
     things = e.data.things;
     actions[e.data.action]();
 }
-
-
-
-
-
-
-
-

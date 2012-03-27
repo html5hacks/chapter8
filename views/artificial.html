@@ -26,7 +26,7 @@
 	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
-    <script type="text/javascript" language=JavaScript src="assets/js/demojs/buzzWorker.js"></script>
+    <script type="text/javascript" language=JavaScript src="assets/js/demojs/aiWorker.js"></script>
     <style>
 
         .thing {
@@ -60,31 +60,22 @@
 	                <a href="./balls.html">Canvas Balls</a>
 	              </li>
 	              <li class="">
-	                <a href="./timers.html">Timers</a>
-	              </li>
-	              <li class="">
-	                <a href="./adv-timers.html">Advanced Timers</a>
-	              </li>
-	              <li class="">
-	                <a href="./shared.html">Shared Workers</a>
+	                <a href="./artificial.html">Artificial Intelligence</a>
 	              </li>
 	            </ul>
 	          </div>
 	        </div>
 	      </div>
 	    </div>
-	
-	
+
 	    <div class="container">
 
 			<!-- Masthead
 			================================================== -->
 			<header class="jumbotron subhead" id="overview">
 			  <h1>TechX 2012 - HTML5 WebWorkers API</h1>
-			  <p class="lead">Manipulating DOM elements with Timers, Sorting Arrays within Web Workers</p>
+			  <p class="lead">Creating an Artificial Intelligence Library: Manipulating DOM elements with Timers, Sorting Arrays within Web Workers</p>
 			</header>
-
-			
 
 			<!-- Forms
 			================================================== -->
@@ -98,7 +89,7 @@
 			      <form class="form-horizontal">
 			        <fieldset>
 
-				      <div class="control-group">
+				      <!-- <div class="control-group">
 			            <label class="control-label" for="select01">Approach</label>
 			            <div class="controls">
 			              <select id="approach">
@@ -107,26 +98,22 @@
 					        <option>without worker</option>																							
 			              </select>
 			            </div>
-			          </div>
+			          </div> -->
 
 				      <div class="control-group">
-			            <label class="control-label" for="select01">Number of Users</label>
+			            <label class="control-label" for="select01">Number of Characters</label>
 			            <div class="controls">
 			              <select id="number">
 			                <option>choose a value</option>
 					        <option>10</option>
-					        <option>50</option>																							
-					        <option>100</option>	
-							<option>150</option>	
-							<option>200</option>
-							<option>250</option>
-							<option>300</option>
-							<option>350</option>																					
-							<option>700</option>
-							<option>1000</option>
-							<option>1200</option>	
-							<option>2000</option>													
-							<option>3000</option>
+					        <option>15</option>																							
+					        <option>20</option>	
+							<option>25</option>	
+							<option>30</option>
+							<option>35</option>
+							<option>40</option>
+							<option>45</option>																					
+							<option>50</option>
 			              </select>
 			            </div>
 			          </div>
@@ -147,12 +134,9 @@
 	      ================================================== -->
 	      <footer class="footer">
 	        <p class="pull-right"><a href="#">Back to top</a></p>
-	        <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter" target="_blank">@twitter</a> by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
-	        <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-	        <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+	        <p>Designed and built for techX 2012.</p>
 	      </footer>
 	    </div><!-- /container -->
-	
 	
     <script type="text/javascript">
 
@@ -281,12 +265,12 @@
 		// }
 
 		var actions = {
-			makeHighestSleepy: function(){
+			fireToBelow: function(){
 				var highest = things.sort(function(a, b){
 					return a.y - b.y
 				});
 				updates = {};
-				updates.action = 'makeHighestSleepy';
+				updates.action = 'fireToBelow';
 				updates.id = highest[0].id;
 				updates.minDy = -2;
 				updates.maxDy = 3;
@@ -295,12 +279,12 @@
 				updateThing(updates);	
 			},
 
-			makeLowestBuzzy: function(){
+			rocketToSky: function(){
 				var lowest = things.sort(function(a, b){
 					return b.y - a.y
 				});
 				updates = {};
-				updates.action = 'makeLowestBuzzy';
+				updates.action = 'rocketToSky';
 				updates.id = lowest[0].id;
 				updates.minDy = -3;
 				updates.maxDy = 2;
@@ -339,7 +323,7 @@
         // worker
         //////////////////////////////////////////
 
-        var worker = new Worker("assets/js/demojs/buzzWorker.js");
+        var worker = new Worker("assets/js/demojs/aiWorker.js");
 
         worker.onmessage = function(e){
 			console.log(e.data)
@@ -376,9 +360,10 @@
             	}
 	        	var intervals = [];
 	        	intervals[0] = window.setInterval(invokeWorker.curry('updatePaths'),1000);
-	        	intervals[1] = window.setInterval(invokeWorker.curry('makeHighestSleepy'),1000),
-	        	intervals[2] = window.setInterval(invokeWorker.curry('makeLowestBuzzy'),1000);
-	        	intervals[3] = window.setInterval(invokeWorker.curry('killSlowest'),1000);
+	        	intervals[1] = window.setInterval(invokeWorker.curry('fireToBelow'),1000),
+	        	intervals[2] = window.setInterval(invokeWorker.curry('rocketToSky'),1000);
+	        	intervals[3] = window.setInterval(invokeWorker.curry('erradicateSlowest'),1000);
+	
 			}else{
 				console.log('WITHOUT WORKER');
 				var i = -1;
@@ -389,19 +374,18 @@
             	}
 				var intervals = [];
 	        	intervals[0] = window.setInterval(process.curry('updatePaths'),1000);
-	        	intervals[1] = window.setInterval(process.curry('makeHighestSleepy'),1000),
-	        	intervals[2] = window.setInterval(process.curry('makeLowestBuzzy'),1000);
-	        	intervals[3] = window.setInterval(process.curry('killSlowest'),1000);
-				
+	        	intervals[1] = window.setInterval(process.curry('fireToBelow'),1000),
+	        	intervals[2] = window.setInterval(process.curry('rocketToSky'),1000);
+	        	intervals[3] = window.setInterval(process.curry('erradicateSlowest'),1000);
 			}
-			
         };
 
         $('#go').click(function(e) {
 			e.preventDefault();
 			console.log('go');
 			var num = $('select#number').val();
-		    var approach = $('select#approach').val();
+		    // var approach = $('select#approach').val();
+			var approach = "with worker";
             init(num, approach);
         });
         

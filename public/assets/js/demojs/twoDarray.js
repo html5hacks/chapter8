@@ -15,7 +15,11 @@
 	            a[i][j] = "[" + i + "," + j + "]";
 	        }
 	    }
-        $('#textarea').text(a.toString());
+	
+		var complete = "PROCESSING COMPLETE";
+		$('#textarea').text(complete);
+		$('#textarea').css({'background-color': '#BF3831', 'color': '#fff'});
+        // $('#textarea').text(a.toString());
 	};
 
 	function processWorker() {
@@ -33,19 +37,26 @@
         worker.postMessage(JSON.stringify(message)); 
         worker.onmessage = function (event) {
      	    // print results of array in result div
-            var data = event.data 
+            // var data = event.data 
             // Must stringify before appending to DOM
-			console.log('data has returned as: ' + typeof data + ' ...time to stringify and append to DOM')
-            $('#textarea').text(JSON.stringify(data));
+			// console.log('data has returned as: ' + typeof data + ' ...time to stringify and append to DOM');
+			var complete = "PROCESSING COMPLETE";
+			$('#textarea').text(complete);
+			$('#textarea').css({'background-color': '#BF3831', 'color': '#fff'});
+            //$('#textarea').text(JSON.stringify(data));
    	    };
 	};
 
 function init() {
     $('#worker').click(function() {
+		var complete = "PROCESSING WITH WEB WORKER";
+		$('#textarea').text(complete);
         processWorker();
     });
 
     $('#non-worker').click(function() {
+		var complete = "PROCESSING WITHOUT WEB WORKER";
+		$('#textarea').text(complete);
         process();
     });
 }
