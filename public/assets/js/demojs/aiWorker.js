@@ -1,13 +1,13 @@
 var things;
 var updates;
 
-// var scaledRandomInt = function(max, min) {
-//     return Math.round(min + Math.random()*(max-min));
-// }
-// 
-// var getDistance = function(x1,x2,y1,y2) {
-//     return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2));
-// }
+var scaledRandomInt = function(max, min) {
+    return Math.round(min + Math.random()*(max-min));
+}
+
+var getDistance = function(x1,x2,y1,y2) {
+    return Math.sqrt(Math.pow(Math.abs(x1-x2),2) + Math.pow(Math.abs(y1-y2),2));
+}
 
 var actions = {
 	fireToBelow: function(){
@@ -20,7 +20,7 @@ var actions = {
 		updates.minDy = -2;
 		updates.maxDy = 3;
 		updates.symbol = '';
-		updates.className = 'thing icon-fire';		
+		updates.className = 'thing user-fire';		
 		postMessage(updates);		
 	},
 	
@@ -34,7 +34,7 @@ var actions = {
 		updates.minDy = -3;
 		updates.maxDy = 2;
 		updates.symbol = '';
-		updates.className = 'thing icon-plane';		
+		updates.className = 'thing user-plane';		
 		postMessage(updates);		
 	},	
 	

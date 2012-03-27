@@ -1388,6 +1388,31 @@ table .span24 {
   width: 1884px;
   margin-left: 0;
 }
+
+
+/* ICONS */
+
+.user-big {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../img/glyphicons/glyphicons_003_user.png");
+}
+
+.user-fire {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../img/glyphicons/glyphicons_022_fire.png");
+}
+
+.user-plane {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url("../img/glyphicons/glyphicons_038_airplane.png");
+}
+
 [class^="icon-"],
 [class*=" icon-"] {
   display: inline-block;

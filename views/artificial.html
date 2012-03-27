@@ -28,7 +28,6 @@
 
     <script type="text/javascript" language=JavaScript src="assets/js/demojs/aiWorker.js"></script>
     <style>
-
         .thing {
            position:absolute;
 		   font-size: 35px;
@@ -121,9 +120,17 @@
 			          <div class="control-group">
 			            <label class="control-label" for="textarea"></label>
 			            <div class="controls">
-						  <button id="go" class="btn-small btn-primary" href="#">Go</button>
+						  <button id="go" class="btn-small btn-primary" href="#">Mass Panic</button>
 			            </div>
 			          </div>
+			
+			          <div class="control-group">
+			            <label class="control-label" for="textarea"></label>
+			            <div class="controls">
+						  <button id="ai" class="btn-small btn-primary" href="#">Begin AI</button>
+			            </div>
+			          </div>
+			
 			        </fieldset>
 			      </form>
 				</div>
@@ -148,11 +155,11 @@
 
         var Thing = function(left, top, id) {
             this.id = id;
-            this.minDx = -1; this.maxDx = 1;
-            this.minDy = -1; this.maxDy = 1;
+            this.minDx = -7; this.maxDx = 7;
+            this.minDy = -7; this.maxDy = 7;
             this.x = this.xOld = left;
             this.y = this.yOld = top;
-            this.pxTravelled = 1;
+            this.pxTravelled = 7;
             elemMap[id] = createThingElem(left, top);
         }
 
@@ -175,7 +182,7 @@
         var createThingElem = function(left, top) {
             var elem = document.createElement("i");
             elem.innerHTML = "";
-            elem.className = "thing icon-user";
+            elem.className = "thing user-big";
             document.body.appendChild(elem);
             elem.style.left = this.x;
             elem.style.top = this.y;
@@ -358,11 +365,15 @@
                 	things[i].start();
                 	thingMap[things[i].id] = things[i];
             	}
-	        	var intervals = [];
-	        	intervals[0] = window.setInterval(invokeWorker.curry('updatePaths'),1000);
-	        	intervals[1] = window.setInterval(invokeWorker.curry('fireToBelow'),1000),
-	        	intervals[2] = window.setInterval(invokeWorker.curry('rocketToSky'),1000);
-	        	intervals[3] = window.setInterval(invokeWorker.curry('erradicateSlowest'),1000);
+				$('#ai').click(function(e) {
+					e.preventDefault();
+					console.log('ai');
+	        		var intervals = [];
+	        		intervals[0] = window.setInterval(invokeWorker.curry('updatePaths'),1000);
+	        		intervals[1] = window.setInterval(invokeWorker.curry('fireToBelow'),1000),
+	        		intervals[2] = window.setInterval(invokeWorker.curry('rocketToSky'),1000);
+	        		intervals[3] = window.setInterval(invokeWorker.curry('erradicateSlowest'),1000);
+				});
 	
 			}else{
 				console.log('WITHOUT WORKER');
