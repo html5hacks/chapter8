@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Hacks Web Workers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/docs.css" rel="stylesheet">
+    <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+
+
+    </style>
+
+	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	-->
+	<!-- Canvas Balls -->
+
+    <script type="text/javascript">
+
+	</script>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+	
+	
+	  <!-- Navbar
+	    ================================================== -->
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+	          <a class="brand" href="./index.html">HTML5 Hacks</a>
+	          <div class="nav-collapse">
+	            <ul class="nav">
+	              <li class="">
+	                <a href="./inline.html">Inline</a>
+	              </li>
+	              <li class="">
+	                <a href="./balls.html">Canvas</a>
+	              </li>
+	              <li class="">
+	                <a href="./artificial.html">AI</a>
+	              </li>
+                   <li class="">
+                    <a href="./processimage.html">Images</a>
+                  </li>
+                   <li class="">
+                    <a href="./sync.html">Sync XHR2</a>
+                  </li>   
+                  <li class="">
+                    <a href="./jsonp.html">JSONP</a>
+                  </li>                      
+                  <li class="">
+                    <a href="./debug.html">Debug</a>
+                  </li>
+                  <li class="">
+                    <a href="./shared.html">Shared</a>
+                  </li> 
+                  <li class="">
+                    <a href="./transfer.html">Transfer</a>
+                  </li> 
+                  <li class="">
+                    <a href="./modules.html">Modules</a>
+                  </li> 
+<!--                   <li class="">
+                    <a href="./realtime.html">Realtime</a>
+                  </li>
+                  <li class="">
+                    <a href="./local.html">Storage</a>
+                  </li>   -->                      
+	            </ul>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	
+    <div class="container">
+
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>HTML5 WebWorkers API</h1>
+		  <p class="lead">Parse Large Data Sets Efficiently with Transferrable Objects</p>
+		</header>
+
+		<!-- Forms
+		================================================== -->
+		<section id="forms">
+		  <div class="row">
+		    <div class="span6">
+
+<!-- 			<img src="assets/img/html5.png" onclick="smear(this)"/>
+				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
+ -->
+<!-- 				<img id="large" class="img" src="assets/img/html5.png" />
+				<img id="icon" class="img" src="assets/img/html5icon.png"/> -->
+
+<!-- 		      <form class="form-horizontal">
+		        <fieldset>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="select01">Select Row Value</label>
+		            <div class="controls">
+		              <select id="row">
+		                <option>choose a value</option>
+						<option>1000</option>
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>											
+		              </select>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="select01">Select Column Value</label>
+		            <div class="controls">
+		              <select id="col">
+		                <option>choose a value</option>
+						<option>1000</option>
+						<option>2000</option>
+						<option>3000</option>
+						<option>4000</option>												
+		              </select>
+		            </div>
+		          </div>
+			
+			      <div class="control-group">
+		            <label class="control-label" for="textarea">Output</label>
+		            <div class="controls">
+		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
+		            </div>
+		          </div>
+		
+		          <div class="control-group">
+		            <label class="control-label" for="textarea">Process</label>
+		            <div class="controls">
+		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
+					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
+		            </div>
+		          </div>
+		        </fieldset>
+		      </form> -->
+		    </div>
+
+		    <div class="span6">
+			  <!-- <canvas id='canvas'></canvas> -->
+			  <canvas id="myCanvas" width="435" height="200"></canvas>
+			</div>
+		  </div>
+		</section>
+
+     <!-- Footer
+      ================================================== -->
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>HTML5 Hacks</p>
+      </footer>
+    </div><!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+	
+    <script type="text/javascript">
+
+	function smear(img) {
+		// Create an offscreen <canvas> the same size as the image 
+		var canvas = document.createElement("canvas"); 
+		canvas.width = img.width;
+		canvas.height = img.height;
+
+
+		// Copy the image into the canvas, then extract its pixels 
+		var context = canvas.getContext("2d"); 
+		context.drawImage(img, 0, 0);
+		console.log(context);
+
+		var pixels = context.getImageData(0,0,img.width,img.height);
+
+		console.log(pixels);
+
+		// Send the pixels to a worker thread
+		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
+		worker.postMessage(pixels); // Copy and send pixels
+
+
+		// Register a handler to get the worker's response
+		worker.onmessage = function(e) {
+			// console.log(e.data); 
+
+
+			if (typeof e.data === "string") { 
+				console.log("Worker: " + e.data);
+			return; }
+
+			console.log(e.data);
+
+			var smeared_pixels = e.data; // Pixels from worker
+
+			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
+			img.src = canvas.toDataURL(); // And then to the img
+			worker.terminate(); // Stop the worker thread
+			canvas.width = canvas.height = 0; // Don't keep pixels around
+		}
+	}
+
+	$(".img").on("mouseover", smear(this));
+
+
+    </script>
+
+    <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+-->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/application.js"></script>
+  </body>
+</html>

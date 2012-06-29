@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HTML5 Hacks Web Workers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/docs.css" rel="stylesheet">
+    <link href="assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+
+    <style type="text/css">
+
+
+    </style>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
+	<!-- Canvas Balls -->
+
+    <script type="text/javascript">
+
+	</script>
+
+  </head>
+
+  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+	
+	
+	  <!-- Navbar
+	    ================================================== -->
+	    <div class="navbar navbar-fixed-top">
+	      <div class="navbar-inner">
+	        <div class="container">
+	          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	          </a>
+	          <a class="brand" href="/">HTML5 Hacks</a>
+	          <div class="nav-collapse">
+	            <ul class="nav">
+	              <li class="">
+	                <a href="./inline.html">Inline</a>
+	              </li>
+	              <li class="">
+	                <a href="./balls.html">Canvas</a>
+	              </li>
+	              <li class="">
+	                <a href="./artificial.html">AI</a>
+	              </li>
+                   <li class="">
+                    <a href="./processimage.html">Images</a>
+                  </li>
+                   <li class="">
+                    <a href="./sync.html">Sync XHR2</a>
+                  </li>   
+                  <li class="">
+                    <a href="./jsonp.html">JSONP</a>
+                  </li>                      
+                  <li class="">
+                    <a href="./debug.html">Debug</a>
+                  </li>
+                  <li class="">
+                    <a href="./shared.html">Shared</a>
+                  </li> 
+                  <li class="">
+                    <a href="./transfer.html">Transfer</a>
+                  </li> 
+                  <li class="">
+                    <a href="./realtime.html">Realtime</a>
+                  </li>
+                  <li class="">
+                    <a href="./local.html">Storage</a>
+                  </li>     
+	            </ul>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	
+    <div class="container">
+
+		<!-- Masthead
+		================================================== -->
+		<header class="jumbotron subhead" id="overview">
+		  <h1>HTML5 WebWorkers API</h1>
+		  <p class="lead">BlobBuilder Inline worker</p>
+		</header>
+
+		<!-- Forms
+		================================================== -->
+		<section id="forms">
+		  <div class="row">
+		    <div class="span6">
+
+		    	    <div id="status"></div>
+
+		    </div>
+
+		    <div class="span6">
+
+			</div>
+		  </div>
+		</section>
+
+     <!-- Footer
+      ================================================== -->
+      <footer class="footer">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>HTML5 Hacks</p>
+      </footer>
+    </div><!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script id="worker1" type="JavaScript/worker">
+      // This script won't be parsed by JS engines because its type is JavaScript/worker.
+      // We got here some simple code to calculate prime number and send it back to the parent page.
+      	self.onmessage = function(event) {
+    		var jsonText = event.data;
+			//parse the structure
+			var jsonData = JSON.parse(jsonText);
+			//send back to the results
+			self.postMessage(jsonData);
+        }
+
+    </script>
+
+    <script>
+		// Creating the BlobBuilder and adding our Web Worker code to it.
+		//new BlobBuilder();
+		var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder )();       
+		bb.append(document.querySelector('#worker1').textContent);
+
+		// creates a simple URL string which can be used to reference 
+		// data stored in a DOM File / Blob object.
+		// Psss... In Chrome, there's a nice page to view all of the 
+		// created blob URLs: chrome://blob-internals/
+		var objUrl = (window.webkitURL || window.URL);
+		var worker = new Worker(objUrl.createObjectURL(bb.getBlob()));
+
+	    //Set Url of JSON data from the facebook graph api. make sure callback is set   with a '?' to overcome the cross domain problems with JSON
+	    var url = "https://graph.facebook.com/?ids=TheFlecktones,umphreysmcgee,SpearheadRecords&callback=?";
+
+	    //Use jQuery getJSON method to fetch the data from the url and then create our unordered list with the relevant data.
+	    $.getJSON(url, function(json) {
+	    	data = JSON.stringify(json);
+	    	worker.postMessage(data); // Start the worker.
+	    });
+
+		worker.onmessage = function(event){
+
+			if (typeof event.data === "string") { 
+				console.log("Worker: " + event.data);
+				return; 
+			}
+
+			//the JSON structure is passed back
+			var jsonData = event.data;
+			console.log(jsonData);
+
+			// create an unordered list
+			var likes = jsonData
+
+			//appednd the list / update the UI
+			$("#status").append(likes);
+
+		};
+    </script>
+
+
+ <script type="text/javascript" src="assets/js/demojs/twoDarray.js"></script>
+
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/google-code-prettify/prettify.js"></script>
+    <script src="assets/js/bootstrap-transition.js"></script>
+    <script src="assets/js/bootstrap-alert.js"></script>
+    <script src="assets/js/bootstrap-modal.js"></script>
+    <script src="assets/js/bootstrap-dropdown.js"></script>
+    <script src="assets/js/bootstrap-scrollspy.js"></script>
+    <script src="assets/js/bootstrap-tab.js"></script>
+    <script src="assets/js/bootstrap-tooltip.js"></script>
+    <script src="assets/js/bootstrap-popover.js"></script>
+    <script src="assets/js/bootstrap-button.js"></script>
+    <script src="assets/js/bootstrap-collapse.js"></script>
+    <script src="assets/js/bootstrap-carousel.js"></script>
+    <script src="assets/js/bootstrap-typeahead.js"></script>
+    <script src="assets/js/application.js"></script>
+  </body>
+</html>
