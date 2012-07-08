@@ -29,8 +29,8 @@
 
     </style>
 
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	-->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
 	<!-- Canvas Balls -->
 
     <script type="text/javascript">
@@ -58,24 +58,21 @@
 	              <li class="">
 	                <a href="./inline.html">Inline</a>
 	              </li>
-	              <li class="">
-	                <a href="./balls.html">Canvas</a>
-	              </li>
-	              <li class="">
-	                <a href="./artificial.html">AI</a>
-	              </li>
+                <li class="">
+                  <a href="./inline.html">Inline</a>
+                </li>
+                <li class="">
+                  <a href="./balls.html">Canvas</a>
+                </li>
+                <li class="">
+                  <a href="./artificial.html">AI</a>
+                </li>
                    <li class="">
                     <a href="./processimage.html">Images</a>
                   </li>
-                   <li class="">
-                    <a href="./sync.html">Sync XHR2</a>
-                  </li>   
                   <li class="">
                     <a href="./jsonp.html">JSONP</a>
                   </li>                      
-                  <li class="">
-                    <a href="./debug.html">Debug</a>
-                  </li>
                   <li class="">
                     <a href="./shared.html">Shared</a>
                   </li> 
@@ -84,13 +81,7 @@
                   </li> 
                   <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li> 
-<!--                   <li class="">
-                    <a href="./realtime.html">Realtime</a>
-                  </li>
-                  <li class="">
-                    <a href="./local.html">Storage</a>
-                  </li>   -->                      
+                  </li>                      
 	            </ul>
 	          </div>
 	        </div>
@@ -111,63 +102,13 @@
 		<section id="forms">
 		  <div class="row">
 		    <div class="span6">
-
-<!-- 			<img src="assets/img/html5.png" onclick="smear(this)"/>
-				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
- -->
-<!-- 				<img id="large" class="img" src="assets/img/html5.png" />
-				<img id="icon" class="img" src="assets/img/html5icon.png"/> -->
-
-<!-- 		      <form class="form-horizontal">
-		        <fieldset>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="select01">Select Row Value</label>
-		            <div class="controls">
-		              <select id="row">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>											
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="select01">Select Column Value</label>
-		            <div class="controls">
-		              <select id="col">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>												
-		              </select>
-		            </div>
-		          </div>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="textarea">Output</label>
-		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="textarea">Process</label>
-		            <div class="controls">
-		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
-					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
-		            </div>
-		          </div>
-		        </fieldset>
-		      </form> -->
+		    	<h2>Regular</h2>
+		    	<div id="content"></div>
 		    </div>
 
 		    <div class="span6">
-			  <!-- <canvas id='canvas'></canvas> -->
-			  <canvas id="myCanvas" width="435" height="200"></canvas>
+		    	<h2>Within WebWorker</h2>
+				<div id="content2">test</div>
 			</div>
 		  </div>
 		</section>
@@ -187,49 +128,50 @@
 	
     <script type="text/javascript">
 
-	function smear(img) {
-		// Create an offscreen <canvas> the same size as the image 
-		var canvas = document.createElement("canvas"); 
-		canvas.width = img.width;
-		canvas.height = img.height;
+		(function(){
+		    Html5Hacks={};
+		    Html5Hacks.twitter={};
+		    Html5Hacks.makeRequest=function(){
+			    var url='http://search.twitter.com/search.json?q=html5&rpp=100&since_id=1';
+			    scriptElement = document.createElement("SCRIPT");
+			    scriptElement.type = "text/javascript";
+			    scriptElement.src = url + "&callback=Html5Hacks.twitter.back";
+			    document.getElementsByTagName("HEAD")[0].appendChild(scriptElement);
+		    }
+
+		    Html5Hacks.twitter.back=function(response){
+		            scriptElement.parentNode.removeChild(scriptElement);
+		            for ( keyItem in response.results){
+		                var item=response.results[keyItem];
+		                var img = $('<img>').attr('src',item.profile_image_url);
+		                var div = $('<div>').append(img);
+		                var text= $('<div>').html($.trim(item.text));
+		                div.append(text);
+		                div.attr('class','tweet');
+		                $('#content').append(item.from_user);
+		                $('#content').append(div);
+		            }
+		        }
+		})();
+
+		jQuery(document).ready(Html5Hacks.makeRequest());
 
 
-		// Copy the image into the canvas, then extract its pixels 
-		var context = canvas.getContext("2d"); 
-		context.drawImage(img, 0, 0);
-		console.log(context);
-
-		var pixels = context.getImageData(0,0,img.width,img.height);
-
-		console.log(pixels);
-
-		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
-		worker.postMessage(pixels); // Copy and send pixels
-
-
-		// Register a handler to get the worker's response
+		var worker = new Worker("javascripts/jsonp-worker.js"); // Create worker 	
 		worker.onmessage = function(e) {
-			// console.log(e.data); 
-
-
-			if (typeof e.data === "string") { 
-				console.log("Worker: " + e.data);
-			return; }
-
 			console.log(e.data);
-
-			var smeared_pixels = e.data; // Pixels from worker
-
-			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
-			img.src = canvas.toDataURL(); // And then to the img
-			worker.terminate(); // Stop the worker thread
-			canvas.width = canvas.height = 0; // Don't keep pixels around
+			var res = e.data;
+			for ( key in res.results){
+                var item = res.results[key];
+                var img = $('<img>').attr('src',item.profile_image_url);
+                var div = $('<div>').append(img);
+                var text= $('<div>').html($.trim(item.text));
+                div.append(text);
+                div.attr('class','tweet');
+                $('#content2').append(item.from_user);
+                $('#content2').append(div);
+            }
 		}
-	}
-
-	$(".img").on("mouseover", smear(this));
-
 
     </script>
 

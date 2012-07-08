@@ -29,9 +29,95 @@
 
     </style>
 
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	-->
-	<!-- Canvas Balls -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+		<script type="text/javascript">
+		function put(id, data, callback) {
+			$.ajax('http://localhost:3000/' + id + '/', {
+				type: 'POST',
+				data: JSON.stringify(data),
+				contentType: 'text/json',
+				success: function() { if ( callback ) callback(true); },
+				error  : function() { if ( callback ) callback(false); }
+			});
+		}
+		function get(id, callback) {
+			$.ajax('http://localhost:3000/' + id + '/', {
+				type: 'GET',
+				dataType: 'json',
+				success: function(data) { if ( callback ) callback(data); },
+				error  : function()     { if ( callback ) callback(null); }
+			});
+		}
+
+
+		//run a simple put/get test
+		put('echo1', { x: 42, friends: ['jdcravens', 'boyofgreen'], label: 'echo...echo...', note: "This object was created on the client, sent to the server, and later retrieved, using JSON transport for both trips." }, function(success) {
+			if ( success ) {
+				get('echo1', function(data) {
+					$('#echo').html(JSON.stringify(data));
+				});
+
+
+				    	var data = {
+				    		example: ["/people/jdcravens", "/people/boyofgreen"]
+				    	};
+
+						var worker = new Worker("javascripts/sync.js"); // Create worker 	
+						worker.postMessage(data.example);
+
+						// Register a handler to get the worker's response
+						worker.onmessage = function(e) {
+
+							console.log(e.data);
+							//var test = JSON.parse(e.data);
+							//var test = JSON.parse('{"test":"test"}');
+							//console.log(test);
+							//console.log(JSON.parse(e.data));
+						}
+
+
+
+
+			} else {
+				alert('put failed!');
+			}
+		});
+
+		// test forms.
+		$(function() {
+
+			$('#get-form').submit(function(e) {
+				e.preventDefault();
+				var id = $('#get-id-field').val();
+				get("people/"+id, function(data) {
+					//if (console) console.log(data);
+					$('#echo').html(JSON.stringify(data));
+				});
+			});
+
+			$('#put-form').submit(function(e) {
+				e.preventDefault();
+				var id = $('#put-id-field').val();
+
+				try { 
+					var value = JSON.parse($('#put-value-field').val());
+				} catch (e) {
+					alert('please use valid JSON in the value box.');
+					return;
+				}
+				put(id, value, function(success) { 
+					if ( success ) {
+						alert('success!');
+						$('#get-id-field').val(id);
+					} else {
+						alert('error!');
+					}
+				});
+			});
+		});
+	</script>
+
 
     <script type="text/javascript">
 
@@ -112,57 +198,31 @@
 		  <div class="row">
 		    <div class="span6">
 
-<!-- 			<img src="assets/img/html5.png" onclick="smear(this)"/>
-				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
- -->
-<!-- 				<img id="large" class="img" src="assets/img/html5.png" />
-				<img id="icon" class="img" src="assets/img/html5icon.png"/> -->
+		    	<div id="timestamp" class="box">
+					Timestamp: <script>document.write(new Date());</script>
+				</div>
 
-<!-- 		      <form class="form-horizontal">
-		        <fieldset>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="select01">Select Row Value</label>
-		            <div class="controls">
-		              <select id="row">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>											
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="select01">Select Column Value</label>
-		            <div class="controls">
-		              <select id="col">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>												
-		              </select>
-		            </div>
-		          </div>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="textarea">Output</label>
-		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="textarea">Process</label>
-		            <div class="controls">
-		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
-					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
-		            </div>
-		          </div>
-		        </fieldset>
-		      </form> -->
+				<div id="echo" class="box">
+				</div>
+
+				<div id="get" class="box">
+				Get
+					<form id="get-form" method="POST">
+						ID:<input name="id" id="get-id-field" value="quote1"><br>
+						<button id="get-button" type="submit">Get</button>
+					</form>
+				</div>
+
+				<div id="put" class="box">
+				Put
+					<form id="put-form" method="POST">
+						ID:<input name="id" id="put-id-field" value="pet1"><br>
+						JSON Value:<textarea name="value" id="put-value-field">{ "name": "Sparkles", "species": "Dog", "age": 3 }</textarea><br>
+						<button id="put-button" type="submit">Put</button>
+					</form>
+				</div>
+
+
 		    </div>
 
 		    <div class="span6">
@@ -187,48 +247,22 @@
 	
     <script type="text/javascript">
 
-	function smear(img) {
-		// Create an offscreen <canvas> the same size as the image 
-		var canvas = document.createElement("canvas"); 
-		canvas.width = img.width;
-		canvas.height = img.height;
+  //   	var data = {
+  //   		example: ["/data/example.json", "/data/example2.json"]
+  //   	};
 
+		// var worker = new Worker("javascripts/sync.js"); // Create worker 	
+		// //worker.postMessage(data.example);
 
-		// Copy the image into the canvas, then extract its pixels 
-		var context = canvas.getContext("2d"); 
-		context.drawImage(img, 0, 0);
-		console.log(context);
+		// // Register a handler to get the worker's response
+		// worker.onmessage = function(e) {
 
-		var pixels = context.getImageData(0,0,img.width,img.height);
-
-		console.log(pixels);
-
-		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
-		worker.postMessage(pixels); // Copy and send pixels
-
-
-		// Register a handler to get the worker's response
-		worker.onmessage = function(e) {
-			// console.log(e.data); 
-
-
-			if (typeof e.data === "string") { 
-				console.log("Worker: " + e.data);
-			return; }
-
-			console.log(e.data);
-
-			var smeared_pixels = e.data; // Pixels from worker
-
-			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
-			img.src = canvas.toDataURL(); // And then to the img
-			worker.terminate(); // Stop the worker thread
-			canvas.width = canvas.height = 0; // Don't keep pixels around
-		}
-	}
-
-	$(".img").on("mouseover", smear(this));
+		// 	console.log(e.data);
+		// 	var test = JSON.parse(e.data);
+		// 	//var test = JSON.parse('{"test":"test"}');
+		// 	console.log(test);
+		// 	//console.log(JSON.parse(e.data));
+		// }
 
 
     </script>

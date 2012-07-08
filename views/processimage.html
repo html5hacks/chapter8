@@ -26,11 +26,10 @@
 
     <style type="text/css">
 
-
     </style>
 
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	-->
+	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	
 	<!-- Canvas Balls -->
 
     <script type="text/javascript">
@@ -67,15 +66,9 @@
                    <li class="">
                     <a href="./processimage.html">Images</a>
                   </li>
-                   <li class="">
-                    <a href="./sync.html">Sync XHR2</a>
-                  </li>   
                   <li class="">
                     <a href="./jsonp.html">JSONP</a>
                   </li>                      
-                  <li class="">
-                    <a href="./debug.html">Debug</a>
-                  </li>
                   <li class="">
                     <a href="./shared.html">Shared</a>
                   </li> 
@@ -84,13 +77,7 @@
                   </li> 
                   <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li> 
-<!--                   <li class="">
-                    <a href="./realtime.html">Realtime</a>
-                  </li>
-                  <li class="">
-                    <a href="./local.html">Storage</a>
-                  </li>   -->                    
+                  </li>                   
 	            </ul>
 	          </div>
 	        </div>
@@ -110,66 +97,22 @@
 		================================================== -->
 		<section id="forms">
 		  <div class="row">
-		    <div class="span6">
+		    <div class="">
 
 
 
 <!-- 				<img src="assets/img/html5.png" onclick="smear(this)"/>
 				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
  -->
-				<img id="large" class="img" src="assets/img/html5.png" />
-				<img id="icon" class="img" src="assets/img/html5icon.png"/>
+				<img id="large" class="hover-img" src="assets/img/HTML5_Logo_512.png" />
+				<img id="icon" class="hover-img" src="assets/img/html5icon.png"/>
 
-<!-- 		      <form class="form-horizontal">
-		        <fieldset>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="select01">Select Row Value</label>
-		            <div class="controls">
-		              <select id="row">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>											
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="select01">Select Column Value</label>
-		            <div class="controls">
-		              <select id="col">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>												
-		              </select>
-		            </div>
-		          </div>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="textarea">Output</label>
-		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="textarea">Process</label>
-		            <div class="controls">
-		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
-					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
-		            </div>
-		          </div>
-		        </fieldset>
-		      </form> -->
+
 		    </div>
 
 		    <div class="span6">
 			  <!-- <canvas id='canvas'></canvas> -->
-			  <canvas id="myCanvas" width="435" height="200"></canvas>
+			  <canvas id="myCanvas" width="512" height="512"></canvas>
 			</div>
 		  </div>
 		</section>
@@ -189,39 +132,44 @@
 	
     <script type="text/javascript">
 
-	function smear(img) {
+	function process(img, x, y) {
+
 		// Create an offscreen <canvas> the same size as the image 
 		var canvas = document.createElement("canvas"); 
 		canvas.width = img.width;
 		canvas.height = img.height;
 
-
 		// Copy the image into the canvas, then extract its pixels 
 		var context = canvas.getContext("2d"); 
 		context.drawImage(img, 0, 0);
-		console.log(context);
 
 		var pixels = context.getImageData(0,0,img.width,img.height);
 
-		console.log(pixels);
-
 		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
-		worker.postMessage(pixels); // Copy and send pixels
+		var worker = new Worker("javascripts/smearworker.js"); // Create worker 
 
+		var obj = {
+			pixels: pixels,
+			x:x,
+			y:y
+		}
+
+		console.log(obj)
+
+		worker.postMessage(obj); // Copy and send pixels
 
 		// Register a handler to get the worker's response
 		worker.onmessage = function(e) {
-			// console.log(e.data); 
+			console.log(e.data); 
 
 
 			if (typeof e.data === "string") { 
 				console.log("Worker: " + e.data);
 			return; }
 
-			console.log(e.data);
+			//console.log(e.data);
 
-			var smeared_pixels = e.data; // Pixels from worker
+			var smeared_pixels = e.data.pixels; // Pixels from worker
 
 			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
 			img.src = canvas.toDataURL(); // And then to the img
@@ -230,13 +178,18 @@
 		}
 	}
 
-	$(".img").on("mouseover", smear(this));
-
+	$(".hover-img").on("mouseover", function(e){
+		//console.log('test');
+		var x = e.pageX - this.offsetLeft;
+        var y = e.pageY - this.offsetTop;
+        console.log("X: " + x + " Y: " + y); 
+		process(this, x, y);
+	});
 
     </script>
 
-    <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
--->
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+
     <script src="assets/js/jquery.js"></script>
     <script src="assets/js/google-code-prettify/prettify.js"></script>
     <script src="assets/js/bootstrap-transition.js"></script>

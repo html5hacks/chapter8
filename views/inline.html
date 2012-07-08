@@ -55,27 +55,21 @@
 	          <a class="brand" href="/">HTML5 Hacks</a>
 	          <div class="nav-collapse">
 	            <ul class="nav">
-	              <li class="">
-	                <a href="./inline.html">Inline</a>
-	              </li>
-	              <li class="">
-	                <a href="./balls.html">Canvas</a>
-	              </li>
-	              <li class="">
-	                <a href="./artificial.html">AI</a>
-	              </li>
+                <li class="">
+                  <a href="./inline.html">Inline</a>
+                </li>
+                <li class="">
+                  <a href="./balls.html">Canvas</a>
+                </li>
+                <li class="">
+                  <a href="./artificial.html">AI</a>
+                </li>
                    <li class="">
                     <a href="./processimage.html">Images</a>
                   </li>
-                   <li class="">
-                    <a href="./sync.html">Sync XHR2</a>
-                  </li>   
                   <li class="">
                     <a href="./jsonp.html">JSONP</a>
                   </li>                      
-                  <li class="">
-                    <a href="./debug.html">Debug</a>
-                  </li>
                   <li class="">
                     <a href="./shared.html">Shared</a>
                   </li> 
@@ -83,11 +77,8 @@
                     <a href="./transfer.html">Transfer</a>
                   </li> 
                   <li class="">
-                    <a href="./realtime.html">Realtime</a>
-                  </li>
-                  <li class="">
-                    <a href="./local.html">Storage</a>
-                  </li>     
+                    <a href="./modules.html">Modules</a>
+                  </li>    
 	            </ul>
 	          </div>
 	        </div>
@@ -158,7 +149,7 @@
 		var worker = new Worker(objUrl.createObjectURL(bb.getBlob()));
 
 	    //Set Url of JSON data from the facebook graph api. make sure callback is set   with a '?' to overcome the cross domain problems with JSON
-	    var url = "https://graph.facebook.com/?ids=TheFlecktones,umphreysmcgee,SpearheadRecords&callback=?";
+	    var url = "https://graph.facebook.com/?ids=TheFlecktones,umphreysmcgee,govtmule,Phish,StringCheeseIncident,Moe.org,LeftoverSalmon,Prettylights,DarkStarOrchestra,YonderMountain&callback=?";
 
 	    //Use jQuery getJSON method to fetch the data from the url and then create our unordered list with the relevant data.
 	    $.getJSON(url, function(json) {
@@ -178,10 +169,58 @@
 			console.log(jsonData);
 
 			// create an unordered list
-			var likes = jsonData
 
-			//appednd the list / update the UI
-			$("#status").append(likes);
+        // for ( keyItem in jsonData){
+        //   // var item=jsonData[keyItem];
+        //   // var img = $('<img>').attr('src',item.profile_image_url);
+        //   // var div = $('<div>').append(img);
+        //   // var text= $('<div>').html($.trim(item.text));
+        //   // div.append(text);
+        //   // div.attr('class','tweet');
+        //   // $('#status').append(item.from_user);
+        //   // $('#status').append(div);
+        // }
+
+      var arr = new Array();  
+      for (var key in jsonData) {
+        if (jsonData.hasOwnProperty(key)) {
+          //console.log(key + " -> " + jsonData[key]);
+          console.log(key + " name: -> " + jsonData[key].name);
+          console.log(key + " talking_about_count: -> " + jsonData[key].talking_about_count);
+          arr.push({ "name": jsonData[key].name, "count": jsonData[key].talking_about_count});
+        }
+      }
+
+      function compare(a,b) {
+        if (a.count < b.count)
+           return 1;
+        if (a.count > b.count)
+          return -1;
+        return 0;
+      }
+
+      function sortfunction(a, b){
+        return (a - b) //causes an array to be sorted numerically and ascending
+      }  
+      // var tre = [2,1,3]
+      // var newtre = tre.sort(sortfunction);
+      var newarr = arr.sort(compare);
+      // console.log(newarr);
+      // console.log(newtre);
+
+			// appednd the list / update the UI
+      var list = $('<ul>').attr('class','list');
+      $("#status").append(list);
+
+      for (var i = 0; i < newarr.length; i++) {
+        var listitem = $('<li>').attr('class','listitem').text(newarr[i].name + " : " + newarr[i].count)
+        $("#status > ul").append(listitem);
+      };
+
+
+
+
+			// $("#status").append(likes);
 
 		};
     </script>

@@ -26,21 +26,15 @@
 
     <style type="text/css">
 
-
     </style>
 
-	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	-->
-	<!-- Canvas Balls -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
-    <script type="text/javascript">
-
-	</script>
+    <script type="text/javascript" src="javascripts/transfer-shared.js"></script>
 
   </head>
 
   <body data-spy="scroll" data-target=".subnav" data-offset="50">
-	
 	
 	  <!-- Navbar
 	    ================================================== -->
@@ -67,15 +61,9 @@
                    <li class="">
                     <a href="./processimage.html">Images</a>
                   </li>
-                   <li class="">
-                    <a href="./sync.html">Sync XHR2</a>
-                  </li>   
                   <li class="">
                     <a href="./jsonp.html">JSONP</a>
                   </li>                      
-                  <li class="">
-                    <a href="./debug.html">Debug</a>
-                  </li>
                   <li class="">
                     <a href="./shared.html">Shared</a>
                   </li> 
@@ -84,13 +72,7 @@
                   </li> 
                   <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li> 
-<!--                   <li class="">
-                    <a href="./realtime.html">Realtime</a>
-                  </li>
-                  <li class="">
-                    <a href="./local.html">Storage</a>
-                  </li>   -->                      
+                  </li>                      
 	            </ul>
 	          </div>
 	        </div>
@@ -106,71 +88,22 @@
 		  <p class="lead">Parse Large Data Sets Efficiently with Transferrable Objects</p>
 		</header>
 
-		<!-- Forms
-		================================================== -->
-		<section id="forms">
 		  <div class="row">
-		    <div class="span6">
+		    <div class="">
+				<section>
+				  <p><a href="http://dev.w3.org/html5/spec/common-dom-interfaces.html#transferable-objects" target="_blank">Transferable Objects</a> are lightning fast! The prefixed <code>[window|worker].webkitPostMessage()</code>
+				  now supports sending an <code>ArrayBuffer</code> as a transferable.</p>
+				  <button onclick="test();">Run test</button>
+				  <!--<input type="checkbox" id="enable-transferable" checked> Enable transferable?-->
+				  <pre id="result"></pre>
+				</section>
 
-<!-- 			<img src="assets/img/html5.png" onclick="smear(this)"/>
-				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
- -->
-<!-- 				<img id="large" class="img" src="assets/img/html5.png" />
-				<img id="icon" class="img" src="assets/img/html5icon.png"/> -->
-
-<!-- 		      <form class="form-horizontal">
-		        <fieldset>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="select01">Select Row Value</label>
-		            <div class="controls">
-		              <select id="row">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>											
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="select01">Select Column Value</label>
-		            <div class="controls">
-		              <select id="col">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>												
-		              </select>
-		            </div>
-		          </div>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="textarea">Output</label>
-		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="textarea">Process</label>
-		            <div class="controls">
-		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
-					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
-		            </div>
-		          </div>
-		        </fieldset>
-		      </form> -->
 		    </div>
 
 		    <div class="span6">
-			  <!-- <canvas id='canvas'></canvas> -->
-			  <canvas id="myCanvas" width="435" height="200"></canvas>
+
 			</div>
 		  </div>
-		</section>
 
      <!-- Footer
       ================================================== -->
@@ -184,55 +117,91 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-	
-    <script type="text/javascript">
-
-	function smear(img) {
-		// Create an offscreen <canvas> the same size as the image 
-		var canvas = document.createElement("canvas"); 
-		canvas.width = img.width;
-		canvas.height = img.height;
+	<script type="text/javascript">
+		var worker = null;
+		var startTime = 0;
+		var supported = false;
 
 
-		// Copy the image into the canvas, then extract its pixels 
-		var context = canvas.getContext("2d"); 
-		context.drawImage(img, 0, 0);
-		console.log(context);
-
-		var pixels = context.getImageData(0,0,img.width,img.height);
-
-		console.log(pixels);
-
-		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
-		worker.postMessage(pixels); // Copy and send pixels
-
-
-		// Register a handler to get the worker's response
-		worker.onmessage = function(e) {
-			// console.log(e.data); 
-
-
-			if (typeof e.data === "string") { 
-				console.log("Worker: " + e.data);
-			return; }
-
-			console.log(e.data);
-
-			var smeared_pixels = e.data; // Pixels from worker
-
-			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
-			img.src = canvas.toDataURL(); // And then to the img
-			worker.terminate(); // Stop the worker thread
-			canvas.width = canvas.height = 0; // Don't keep pixels around
+		function log(str) {
+		  var elem = document.getElementById('result');
+		  var log = function(s) {
+		   elem.innerHTML += ''.concat(time(), ' ', s, '\n');
+		  };
+		  log(str);
 		}
-	}
 
-	$(".img").on("mouseover", smear(this));
+		function init() {
+		  worker = new Worker('javascripts/transfer.js');
 
+		  // Take care of vendor prefixes.
+		  worker.postMessage = worker.webkitPostMessage || worker.postMessage;
 
-    </script>
+		  worker.onmessage = function(e) {
+		    console.timeEnd('actual postMessage round trip was');
+		    // capture elapsed time since the original postMessage();
+		    if (!e.data.type) {
+		      var elapsed = seconds(startTime);
+		    }
 
+		    var data = e.data;
+
+		    if (data.type && data.type == 'debug') {
+		      log(data.msg);
+		    } else {
+		      var rate = Math.round(toMB(data.byteLength) / elapsed);
+		      log(source() + 'postMessage roundtrip took: ' + (elapsed * 1000) + ' ms');
+		      log(source() + 'postMessage roundtrip rate: ' + rate + ' MB/s');
+		    }
+		  };
+
+		  // To feature detect: send a small ArrayBuffer. If transferable objects are
+		  // supported, the ArrayBuffer will be neutered (cleared out) after sent.
+		  if (USE_TRANSFERRABLE) {
+		    var ab = new ArrayBuffer(1);
+		    try {
+		      worker.postMessage(ab, [ab]);
+		      if (ab.byteLength) {
+		        alert('Transferables are not supported in your browser!');
+		        log(source() + 'USING STRUCTURED CLONE (copy) :(');
+		      } else {
+		        log(source() + 'USING TRANSFERABLE OBJECTS :)');
+		        supported = true;
+		      }
+		    } catch(e) {
+		      alert('Transferables are not supported in your browser!');
+		    }
+		  } else {
+		    worker.postMessage(ab); // send anyway to init worker.
+		    log(source() + 'USING STRUCTURED CLONE (copy) :(');
+		  }
+
+		  log(source() + 'READY!');
+		}
+
+		function test() {
+
+		  setupArray(); // Need to do this on every run for the repeated runs with transferable arrays. They're cleared out after they're transferred.
+
+		  startTime = new Date();
+		  console.time('actual postMessage round trip was');
+
+		  if (USE_TRANSFERRABLE && supported) {
+		    // Note: clears the uInt8View and it's underlying ArrayBuffer, transfering it
+		    // out of this view, to the worker.
+		    // Passing multiple transferables:
+		    //   worker.webkitPostMessage({view1: int8View, buffer2: anotherBuffer}, [int8View.buffer, anotherBuffer]);
+		    //   window.webkitPostMessage(arrayBuffer, targetOrigin, [arrayBuffer]);
+		    worker.postMessage(uInt8View.buffer, [uInt8View.buffer]);
+		  } else {
+		    worker.postMessage(uInt8View.buffer);
+		  }
+		}
+
+		window.addEventListener('load', function(e) {
+		  init();
+		}, false);
+	</script>
     <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 -->
     <script src="assets/js/jquery.js"></script>

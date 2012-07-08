@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Shared Workers Test Page #2</title>
+<script type="text/javascript">
+
+  window.onload = function() {
+
+    console.log("Calling the worker from page 2");
+    parent.worker.port.addEventListener("message", function(e) {  
+
+      var data = e.data;
+
+      var result = document.getElementById("result");
+
+      if (data.PiValue) {
+        result.innerHTML += data.PiValue + '<br/>';
+      } else if (data.value) {
+        console.log('Page 2 received message: ' + data.value);  
+      }
+    }, false);  
+
+    parent.worker.port.start();  
+  }
+</script>
+</head>
+<body>
+<h2>Shared Workers Test Page #2</h2>
+<article>
+  <div id="result"></div>
+</article>
+</body>
+</html>
