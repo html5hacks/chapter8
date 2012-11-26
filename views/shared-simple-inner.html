@@ -1,0 +1,16 @@
+<!DOCTYPE HTML>
+<title>HTML5 Hacks: Shared Worker</title>
+<pre id=log>Log:</pre>
+<script>
+  var worker = new SharedWorker('javascripts/shared-simple.js');
+  var log = document.getElementById('log');
+  
+  worker.port.onmessage = function(e) {
+   log.textContent += '\n' + e.data;
+
+    if (e.data.charAt(0) == '#'){
+      document.body.style.background = e.data;
+    }
+
+  }
+</script>

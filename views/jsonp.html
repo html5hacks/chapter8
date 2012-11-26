@@ -24,11 +24,6 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
 
-    <style type="text/css">
-
-
-    </style>
-
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	
 	<!-- Canvas Balls -->
@@ -54,35 +49,32 @@
 	          </a>
 	          <a class="brand" href="./index.html">HTML5 Hacks</a>
 	          <div class="nav-collapse">
-	            <ul class="nav">
-	              <li class="">
-	                <a href="./inline.html">Inline</a>
-	              </li>
-                <li class="">
-                  <a href="./inline.html">Inline</a>
-                </li>
-                <li class="">
-                  <a href="./balls.html">Canvas</a>
-                </li>
-                <li class="">
-                  <a href="./artificial.html">AI</a>
-                </li>
-                   <li class="">
+                <ul class="nav">
+                    <li class="">
+                    <a href="./inline.html">Inline</a>
+                    </li>
+                    <li class="">
+                    <a href="./balls.html">Canvas</a>
+                    </li>
+                    <li class="">
+                    <a href="./artificial.html">AI</a>
+                    </li>
+                    <li class="">
                     <a href="./processimage.html">Images</a>
-                  </li>
-                  <li class="">
+                    </li>
+                    <li class="active">
                     <a href="./jsonp.html">JSONP</a>
-                  </li>                      
-                  <li class="">
-                    <a href="./shared.html">Shared</a>
-                  </li> 
-                  <li class="">
+                    </li>                      
+                    <li class="">
+                    <a href="./shared-simple.html">Shared</a>
+                    </li> 
+                    <li class="">
                     <a href="./transfer.html">Transfer</a>
-                  </li> 
-                  <li class="">
+                    </li> 
+                    <!-- <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li>                      
-	            </ul>
+                    </li> -->                         
+                </ul>
 	          </div>
 	        </div>
 	      </div>
@@ -101,13 +93,13 @@
 		================================================== -->
 		<section id="forms">
 		  <div class="row">
-		    <div class="span6">
+<!-- 		    <div class="span6">
 		    	<h2>Regular</h2>
 		    	<div id="content"></div>
-		    </div>
+		    </div> -->
 
 		    <div class="span6">
-		    	<h2>Within WebWorker</h2>
+		    	<!-- <h2>Within WebWorker</h2> -->
 				<div id="content2">test</div>
 			</div>
 		  </div>
@@ -154,7 +146,7 @@
 		        }
 		})();
 
-		jQuery(document).ready(Html5Hacks.makeRequest());
+		// jQuery(document).ready(Html5Hacks.makeRequest());
 
 
 		var worker = new Worker("javascripts/jsonp-worker.js"); // Create worker 	

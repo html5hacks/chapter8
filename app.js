@@ -179,8 +179,20 @@ app.get('/debug.html', function(req, res){
 app.get('/shared.html', function(req, res){
   res.render("shared.html");
 });
+app.get('/shared-simple.html', function(req, res){
+  res.render("shared-simple.html");
+});
 app.get('/shared-inner.html', function(req, res){
   res.render("shared-inner.html");
+});
+app.get('/shared-simple-inner.html', function(req, res){
+  res.render("shared-simple-inner.html");
+});
+app.get('/shared-simple-inner2.html', function(req, res){
+  res.render("shared-simple-inner2.html");
+});
+app.get('/shared-simple-inner3.html', function(req, res){
+  res.render("shared-simple-inner3.html");
 });
 app.get('/transfer.html', function(req, res){
   res.render("transfer.html");

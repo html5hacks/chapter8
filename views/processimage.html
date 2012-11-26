@@ -24,17 +24,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
 
-    <style type="text/css">
-
-    </style>
-
-	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	
-	<!-- Canvas Balls -->
-
-    <script type="text/javascript">
-
-	</script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 
   </head>
 
@@ -53,44 +43,43 @@
 	          </a>
 	          <a class="brand" href="./index.html">HTML5 Hacks</a>
 	          <div class="nav-collapse">
-	            <ul class="nav">
-	              <li class="">
-	                <a href="./inline.html">Inline</a>
-	              </li>
-	              <li class="">
-	                <a href="./balls.html">Canvas</a>
-	              </li>
-	              <li class="">
-	                <a href="./artificial.html">AI</a>
-	              </li>
-                   <li class="">
+                <ul class="nav">
+                    <li class="">
+                    <a href="./inline.html">Inline</a>
+                    </li>
+                    <li class="">
+                    <a href="./balls.html">Canvas</a>
+                    </li>
+                    <li class="">
+                    <a href="./artificial.html">AI</a>
+                    </li>
+                    <li class="active">
                     <a href="./processimage.html">Images</a>
-                  </li>
-                  <li class="">
+                    </li>
+                    <li class="">
                     <a href="./jsonp.html">JSONP</a>
-                  </li>                      
-                  <li class="">
-                    <a href="./shared.html">Shared</a>
-                  </li> 
-                  <li class="">
+                    </li>                      
+                    <li class="">
+                    <a href="./shared-simple.html">Shared</a>
+                    </li> 
+                    <li class="">
                     <a href="./transfer.html">Transfer</a>
-                  </li> 
-                  <li class="">
+                    </li> 
+                    <!-- <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li>                   
-	            </ul>
+                    </li> -->                        
+                </ul>
 	          </div>
 	        </div>
 	      </div>
 	    </div>
 	
     <div class="container">
-
 		<!-- Masthead
 		================================================== -->
 		<header class="jumbotron subhead" id="overview">
 		  <h1>HTML5 WebWorkers API</h1>
-		  <p class="lead">Image Processing (Smear) through Pixel Manipulation</p>
+		  <p class="lead">Image Processing (GreyScale) through Pixel Manipulation and Mouse Coordinates Capture</p>
 		</header>
 
 		<!-- Forms
@@ -99,14 +88,10 @@
 		  <div class="row">
 		    <div class="">
 
-
-
-<!-- 				<img src="assets/img/html5.png" onclick="smear(this)"/>
-				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
- -->
-				<img id="large" class="hover-img" src="assets/img/HTML5_Logo_512.png" />
-				<img id="icon" class="hover-img" src="assets/img/html5icon.png"/>
-
+                <!-- <img src="assets/img/html5.png" onclick="smear(this)"/>
+                	 <img src="assets/img/html5icon.png" onclick="smear(this)"/> -->
+                     <img id="large" class="hover-img" src="assets/img/HTML5_Logo_512.png" />
+        		<!-- <img id="icon" class="hover-img" src="assets/img/html5icon.png"/> -->
 
 		    </div>
 
@@ -123,6 +108,7 @@
         <p class="pull-right"><a href="#">Back to top</a></p>
         <p>HTML5 Hacks</p>
       </footer>
+
     </div><!-- /container -->
 
     <!-- Le javascript
@@ -132,59 +118,59 @@
 	
     <script type="text/javascript">
 
-	function process(img, x, y) {
+    	function process(img, x, y) {
 
-		// Create an offscreen <canvas> the same size as the image 
-		var canvas = document.createElement("canvas"); 
-		canvas.width = img.width;
-		canvas.height = img.height;
+    		// Create an offscreen <canvas> the same size as the image 
+    		var canvas = document.createElement("canvas"); 
+    		canvas.width = img.width;
+    		canvas.height = img.height;
 
-		// Copy the image into the canvas, then extract its pixels 
-		var context = canvas.getContext("2d"); 
-		context.drawImage(img, 0, 0);
+    		// Copy the image into the canvas, then extract its pixels 
+    		var context = canvas.getContext("2d"); 
+    		context.drawImage(img, 0, 0);
 
-		var pixels = context.getImageData(0,0,img.width,img.height);
+    		var pixels = context.getImageData(0,0,img.width,img.height);
 
-		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/smearworker.js"); // Create worker 
+    		// Send the pixels to a worker thread
+    		var worker = new Worker("javascripts/smearworker.js"); // Create worker 
 
-		var obj = {
-			pixels: pixels,
-			x:x,
-			y:y
-		}
+    		var obj = {
+    			pixels: pixels,
+    			x:x,
+    			y:y
+    		}
 
-		console.log(obj)
+    		console.log(obj)
 
-		worker.postMessage(obj); // Copy and send pixels
+    		worker.postMessage(obj); // Copy and send pixels
 
-		// Register a handler to get the worker's response
-		worker.onmessage = function(e) {
-			console.log(e.data); 
+    		// Register a handler to get the worker's response
+    		worker.onmessage = function(e) {
+    			console.log(e.data); 
 
 
-			if (typeof e.data === "string") { 
-				console.log("Worker: " + e.data);
-			return; }
+    			if (typeof e.data === "string") { 
+    				console.log("Worker: " + e.data);
+    			return; }
 
-			//console.log(e.data);
+    			//console.log(e.data);
 
-			var smeared_pixels = e.data.pixels; // Pixels from worker
+    			var smeared_pixels = e.data.pixels; // Pixels from worker
 
-			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
-			img.src = canvas.toDataURL(); // And then to the img
-			worker.terminate(); // Stop the worker thread
-			canvas.width = canvas.height = 0; // Don't keep pixels around
-		}
-	}
+    			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
+    			img.src = canvas.toDataURL(); // And then to the img
+    			worker.terminate(); // Stop the worker thread
+    			canvas.width = canvas.height = 0; // Don't keep pixels around
+    		}
+    	}
 
-	$(".hover-img").on("mouseover", function(e){
-		//console.log('test');
-		var x = e.pageX - this.offsetLeft;
-        var y = e.pageY - this.offsetTop;
-        console.log("X: " + x + " Y: " + y); 
-		process(this, x, y);
-	});
+    	$(".hover-img").on("mouseover", function(e){
+    		//console.log('test');
+    		var x = e.pageX - this.offsetLeft;
+            var y = e.pageY - this.offsetTop;
+            console.log("X: " + x + " Y: " + y); 
+    		process(this, x, y);
+    	});
 
     </script>
 

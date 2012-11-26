@@ -16,6 +16,7 @@ self.onmessage = function(e) {
   // Presumably, this worker would create its own Uint8Array or alter the
   // ArrayBuffer (e.data) in some way. For this example, just send back the data
   // we were sent.
+  
   var uInt8View = new Uint8Array(e.data);
 
   if (USE_TRANSFERRABLE) {

@@ -30,12 +30,58 @@
     </style>
 
 	<!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	-->
-	<!-- Canvas Balls -->
+	<script src="http://yui.yahooapis.com/3.5.1/build/yui/yui-min.js"></script> -->
 
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/1.0.8/require.min.js"></script>
+
+    <script type="text/javascript" src="javascripts/doh/runner.js"></script>
+    <script type="text/javascript" src="javascripts/doh/_browserRunner.js"></script>
+    
     <script type="text/javascript">
 
-	</script>
+        //Start up a web worker and wait for a response from it.
+        var worker = new Worker('javascripts/requirejs-worker.js'),
+            d = new doh.Deferred(),
+            count = 0;
+
+        worker.onerror = function () {
+            console.error("WORKER ERROR", arguments);
+        };
+
+        worker.onmessage = function(evt) {
+            if (evt.data.debug) {
+                console.log(evt.data.debug);
+            } else {
+                count += 1;
+    
+                if (count === 1) {
+                    doh.is("blue", evt.data);
+                } else if (count === 2) {
+                    doh.is("green", evt.data);
+                } else if (count === 3) {
+                    doh.is("You called a function", evt.data);
+                } else if (count === 4) {
+                    doh.is("blue", evt.data);
+                    d.callback(true);
+                }
+            }
+        };
+
+        doh.register(
+            "webworkers",
+            [
+		{
+		    name: "webworkers",
+		    timeout: 5000,
+		    runTest: function() {
+                        return d;
+                    }
+                }
+            ]
+        );
+
+        doh.run();
+    </script>
 
   </head>
 
@@ -54,32 +100,32 @@
 	          </a>
 	          <a class="brand" href="./index.html">HTML5 Hacks</a>
 	          <div class="nav-collapse">
-	            <ul class="nav">
-	              <li class="">
-	                <a href="./inline.html">Inline</a>
-	              </li>
-	              <li class="">
-	                <a href="./balls.html">Canvas</a>
-	              </li>
-	              <li class="">
-	                <a href="./artificial.html">AI</a>
-	              </li>
-                   <li class="">
+                <ul class="nav">
+                    <li class="">
+                    <a href="./inline.html">Inline</a>
+                    </li>
+                    <li class="">
+                    <a href="./balls.html">Canvas</a>
+                    </li>
+                    <li class="">
+                    <a href="./artificial.html">AI</a>
+                    </li>
+                    <li class="">
                     <a href="./processimage.html">Images</a>
-                  </li>
-                  <li class="">
+                    </li>
+                    <li class="">
                     <a href="./jsonp.html">JSONP</a>
-                  </li>                      
-                  <li class="">
-                    <a href="./shared.html">Shared</a>
-                  </li> 
-                  <li class="">
+                    </li>                      
+                    <li class="">
+                    <a href="./shared-simple.html">Shared</a>
+                    </li> 
+                    <li class="">
                     <a href="./transfer.html">Transfer</a>
-                  </li> 
-                  <li class="">
+                    </li> 
+                    <li class="">
                     <a href="./modules.html">Modules</a>
-                  </li>                      
-	            </ul>
+                    </li>                        
+                </ul>
 	          </div>
 	        </div>
 	      </div>
@@ -91,71 +137,165 @@
 		================================================== -->
 		<header class="jumbotron subhead" id="overview">
 		  <h1>HTML5 WebWorkers API</h1>
-		  <p class="lead">Use JavaScript Modules wthin Web Workers with YUI and RequireJS</p>
+		  <p class="lead">Use JavaScript Modules wthin Web Workers with RequireJS</p>
 		</header>
 
 		<!-- Forms
 		================================================== -->
-		<section id="forms">
+		<section id="">
 		  <div class="row">
+<!-- 		    <div class="span6">
+		    	<h2>YUI Web Worker</h2>
+					<div id="demo">YUI3 - click here.</div> -->
+						<script>
+
+
+// function Set() {          // This is the constructor
+//     this.values = {};     // The properties of this object hold the set
+//     this.n = 0;           // How many values are in the set
+//     this.add.apply(this, arguments);  // All arguments are values to add
+// }
+
+// // Add each of the arguments to the set.
+// Set.prototype.add = function() {
+//     for(var i = 0; i < arguments.length; i++) {  // For each argument
+//         var val = arguments[i];                  // The value to add to the set
+//         var str = Set._v2s(val);                 // Transform it to a string
+//         if (!this.values.hasOwnProperty(str)) {  // If not already in the set
+//             this.values[str] = val;              // Map string to value
+//             this.n++;                            // Increase set size
+//         }
+//     }
+//     return this;                                 // Support chained method calls
+// };
+
+// // Remove each of the arguments from the set.
+// Set.prototype.remove = function() {
+//     for(var i = 0; i < arguments.length; i++) {  // For each argument
+//         var str = Set._v2s(arguments[i]);        // Map to a string
+//         if (this.values.hasOwnProperty(str)) {   // If it is in the set
+//             delete this.values[str];             // Delete it
+//             this.n--;                            // Decrease set size
+//         }
+//     }
+//     return this;                                 // For method chaining
+// };
+
+// // Return true if the set contains value; false otherwise.
+// Set.prototype.contains = function(value) {
+//     return this.values.hasOwnProperty(Set._v2s(value));
+// };
+
+// // Return the size of the set.
+// Set.prototype.size = function() { return this.n; };
+
+// // Call function f on the specified context for each element of the set.
+// Set.prototype.foreach = function(f, context) {
+//     for(var s in this.values)                 // For each string in the set
+//         if (this.values.hasOwnProperty(s))    // Ignore inherited properties
+//             f.call(context, this.values[s]);  // Call f on the value
+// };
+
+// // This internal function maps any JavaScript value to a unique string.
+// Set._v2s = function(val) {
+//     switch(val) {
+//         case undefined:     return 'u';          // Special primitive
+//         case null:          return 'n';          // values get single-letter
+//         case true:          return 't';          // codes.
+//         case false:         return 'f';
+//         default: switch(typeof val) {
+//             case 'number':  return '#' + val;    // Numbers get # prefix.
+//             case 'string':  return '"' + val;    // Strings get " prefix.
+//             default: return '@' + objectId(val); // Objs and funcs get @
+//         }
+//     }
+
+//     // For any object, return a string. This function will return a different
+//     // string for different objects, and will always return the same string
+//     // if called multiple times for the same object. To do this it creates a
+//     // property on o. In ES5 the property would be nonenumerable and read-only.
+//     function objectId(o) {
+//         var prop = "|**objectid**|";   // Private property name for storing ids
+//         if (!o.hasOwnProperty(prop))   // If the object has no id
+//             o[prop] = Set._v2s.next++; // Assign it the next available
+//         return o[prop];                // Return the id
+//     }
+// };
+// Set._v2s.next = 100;    // Start assigning object ids at this value.
+
+
+// 						var Y = YUI();
+// 						var loader = new Y.Loader({
+// 						    combine: true,
+// 							ignoreRegistered: true,
+// 							require: [ 'node' ] 
+// 						});
+
+// 						//Tell loader to calculate dependencies
+// 						loader.calculate();
+
+// 						var out = loader.resolve();
+
+// 						console.log(out);
+
+// 						var combo_url = out.js[0];
+
+// 						console.log(combo_url)
+
+
+// 						Y.add('worker-module', function (Y) {
+						  
+// 						}, '0.0.1', {
+// 						    requires: ['node', 'event']
+// 						});
+
+// 						// Create a new YUI sandbox and load the "node" module.
+// 						Y.use('worker-module', function (Y) {
+// 						    // YUI will call this function and pass in the YUI instance (Y) once all
+// 						    // modules have finished loading and are ready to use.
+
+// 						    // We can now use Y.Node to get references to DOM elements using CSS
+// 						    // selectors.
+// 						    var demo = Y.one('#demo');
+
+// 						    // And we can listen for DOM events.
+// 						    demo.on('click', function (e) {
+// 						        demo.set('text', 'Clicked!');
+// 						    });
+// 						});
+
+// 						console.log(Y.Env._loader);
+// 						var test = {"test": "test"}
+
+// 						var yconfig = new Set(Y.Env._loader);
+// 						yconfig.remove('doc', 'win');
+// 						console.log(yconfig);
+
+
+
+// 						var yuiworker = new Worker("javascripts/yui3-worker.js"); 
+// 							//yuiworker.postMessage(yconfig);
+
+
+// 							// Register a handler to get the worker's response
+// 							yuiworker.onmessage = function(e) {
+
+// 								if (typeof e.data === "string") { 
+// 									console.log("Worker: " + e.data);
+// 								return; }
+
+// 								console.log(e.data);
+
+// 							}
+
+						</script>
+
+<!-- 		    </div> -->
+
 		    <div class="span6">
+		    	<h2>requireJS Web Worker</h2>
+		    		<div id="demo2">requirejs - see console</div>
 
-<!-- 			<img src="assets/img/html5.png" onclick="smear(this)"/>
-				<img src="assets/img/html5icon.png" onclick="smear(this)"/>
- -->
-<!-- 				<img id="large" class="img" src="assets/img/html5.png" />
-				<img id="icon" class="img" src="assets/img/html5icon.png"/> -->
-
-<!-- 		      <form class="form-horizontal">
-		        <fieldset>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="select01">Select Row Value</label>
-		            <div class="controls">
-		              <select id="row">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>											
-		              </select>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="select01">Select Column Value</label>
-		            <div class="controls">
-		              <select id="col">
-		                <option>choose a value</option>
-						<option>1000</option>
-						<option>2000</option>
-						<option>3000</option>
-						<option>4000</option>												
-		              </select>
-		            </div>
-		          </div>
-			
-			      <div class="control-group">
-		            <label class="control-label" for="textarea">Output</label>
-		            <div class="controls">
-		              <textarea class="input-xlarge" id="textarea" rows="1"></textarea>
-		            </div>
-		          </div>
-		
-		          <div class="control-group">
-		            <label class="control-label" for="textarea">Process</label>
-		            <div class="controls">
-		              <button id="worker" class="btn-small btn-danger" href="#">With Web Worker</button>
-					  <button id="non-worker" class="btn-small btn-primary" href="#">Without Web Worker</button>
-		            </div>
-		          </div>
-		        </fieldset>
-		      </form> -->
-		    </div>
-
-		    <div class="span6">
-			  <!-- <canvas id='canvas'></canvas> -->
-			  <canvas id="myCanvas" width="435" height="200"></canvas>
 			</div>
 		  </div>
 		</section>
@@ -175,48 +315,22 @@
 	
     <script type="text/javascript">
 
-	function smear(img) {
-		// Create an offscreen <canvas> the same size as the image 
-		var canvas = document.createElement("canvas"); 
-		canvas.width = img.width;
-		canvas.height = img.height;
+  //   console.log(require)
+
+		// var worker = new Worker("javascripts/requirejs-worker.js"); 
+		// //worker.postMessage();
 
 
-		// Copy the image into the canvas, then extract its pixels 
-		var context = canvas.getContext("2d"); 
-		context.drawImage(img, 0, 0);
-		console.log(context);
+		// // Register a handler to get the worker's response
+		// worker.onmessage = function(e) {
 
-		var pixels = context.getImageData(0,0,img.width,img.height);
+		// 	if (typeof e.data === "string") { 
+		// 		console.log("Worker: " + e.data);
+		// 	return; }
 
-		console.log(pixels);
+		// 	console.log(e.data);
 
-		// Send the pixels to a worker thread
-		var worker = new Worker("javascripts/SmearWorker.js"); // Create worker 
-		worker.postMessage(pixels); // Copy and send pixels
-
-
-		// Register a handler to get the worker's response
-		worker.onmessage = function(e) {
-			// console.log(e.data); 
-
-
-			if (typeof e.data === "string") { 
-				console.log("Worker: " + e.data);
-			return; }
-
-			console.log(e.data);
-
-			var smeared_pixels = e.data; // Pixels from worker
-
-			context.putImageData(smeared_pixels, 0, 0); // Copy them to the canvas
-			img.src = canvas.toDataURL(); // And then to the img
-			worker.terminate(); // Stop the worker thread
-			canvas.width = canvas.height = 0; // Don't keep pixels around
-		}
-	}
-
-	$(".img").on("mouseover", smear(this));
+		//}
 
 
     </script>
