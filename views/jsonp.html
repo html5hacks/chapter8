@@ -124,7 +124,7 @@
 		    Html5Hacks={};
 		    Html5Hacks.twitter={};
 		    Html5Hacks.makeRequest=function(){
-			    var url='http://search.twitter.com/search.json?q=html5&rpp=100&since_id=1';
+			    var url='https://api.twitter.com/1.1/search/tweets.json?q=html5&count=100&since_id=1';
 			    scriptElement = document.createElement("SCRIPT");
 			    scriptElement.type = "text/javascript";
 			    scriptElement.src = url + "&callback=Html5Hacks.twitter.back";

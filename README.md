@@ -22,7 +22,7 @@ GitHub is one of the most popular places to host open source code, because it's 
 Quick start
 -----------
 
-HTML5 Hacks Chapter 3 is a simple, Node.js application. 
+HTML5 Hacks Chapter 8 is a simple, Node.js application. 
 
 ## Getting the Hacks
 
