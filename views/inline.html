@@ -155,15 +155,18 @@
     <script>
 		// Creating the BlobBuilder and adding our Web Worker code to it.
 		//new BlobBuilder();
-		var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder )();       
-		bb.append(document.querySelector('#worker1').textContent);
-
+		//var bb = new (window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder )();       
+		//bb.append(document.querySelector('#worker1').textContent);
+		// Above codes are obsoleted for latest specification
+		var tContent = document.querySelector('#worker1').textContent;
+		var blob = new Blob([tContent]);
 		// creates a simple URL string which can be used to reference 
 		// data stored in a DOM File / Blob object.
 		// Psss... In Chrome, there's a nice page to view all of the 
 		// created blob URLs: chrome://blob-internals/
 		var objUrl = (window.webkitURL || window.URL);
-		var worker = new Worker(objUrl.createObjectURL(bb.getBlob()));
+		//var worker = new Worker(objUrl.createObjectURL(bb.getBlob()));
+		var worker = new Worker(objUrl.createObjectURL(blob));
 
 	    //Set Url of JSON data from the facebook graph api. make sure callback is set   with a '?' to overcome the cross domain problems with JSON
 	    var url = "https://graph.facebook.com/?ids=TheFlecktones,umphreysmcgee,govtmule,Phish,StringCheeseIncident,Moe.org,LeftoverSalmon,Prettylights,DarkStarOrchestra,YonderMountain&callback=?";
